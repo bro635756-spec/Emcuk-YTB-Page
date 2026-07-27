@@ -3,21 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EmcükYTB - Official Platform</title>
+    <title>EmcükYTB - Resmi Web Sitesi</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-dark: #0a0d12;
-            --bg-card: #121824;
-            --accent-green: #10b981;
-            --accent-neon: #22c55e;
-            --accent-blue: #3b82f6;
-            --text-main: #f3f4f6;
-            --text-muted: #9ca3af;
-            --border-color: rgba(255, 255, 255, 0.08);
-            --border-hover: rgba(34, 197, 94, 0.3);
+            --bg-main: #0a0f0d;
+            --bg-card: #121a15;
+            --bg-card-hover: #18241d;
+            --accent-green: #00ff66;
+            --accent-green-dark: #00cc52;
+            --text-white: #ffffff;
+            --text-muted: #a3b8ab;
+            --border-color: #1e2e23;
         }
 
         * {
@@ -28,31 +27,17 @@
         }
 
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            overflow-x: hidden;
+            font-family: 'Inter', -apple-system, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-white);
             line-height: 1.6;
+            overflow-x: hidden;
         }
 
-        /* Arka Plan Glow Efektleri */
-        .glow-bg {
-            position: fixed;
-            top: -100px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(34, 197, 94, 0.12) 0%, rgba(59, 130, 246, 0.08) 50%, transparent 70%);
-            z-index: -1;
-            pointer-events: none;
-            filter: blur(80px);
-        }
-
-        /* Scroll Animasyonu Sınıfları */
+        /* --- Animations & Intersection Observer Classes --- */
         .reveal {
             opacity: 0;
-            transform: translateY(30px);
+            transform: translateY(40px);
             transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
@@ -61,552 +46,457 @@
             transform: translateY(0);
         }
 
-        /* Navbar */
+        /* --- Header / Navbar --- */
         .navbar {
+            background-color: rgba(18, 26, 21, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
             position: sticky;
             top: 0;
             z-index: 1000;
-            background: rgba(10, 13, 18, 0.8);
-            backdrop-filter: blur(16px);
-            border-bottom: 1px solid var(--border-color);
-            padding: 16px 0;
         }
 
         .nav-container {
-            max-width: 1200px;
+            max-width: 1320px;
             margin: 0 auto;
-            padding: 0 24px;
+            padding: 12px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .brand {
+        .brand-logo {
             display: flex;
             align-items: center;
             gap: 12px;
             text-decoration: none;
-            color: #fff;
-            font-weight: 800;
-            font-size: 20px;
         }
 
-        .brand img {
-            height: 36px;
+        .brand-logo img {
+            height: 42px;
             width: auto;
             object-fit: contain;
         }
 
-        .nav-menu {
+        .nav-links {
             display: flex;
-            gap: 28px;
+            gap: 20px;
             align-items: center;
-            list-style: none;
         }
 
-        .nav-menu a {
+        .nav-links a {
             color: var(--text-muted);
             text-decoration: none;
+            font-weight: 600;
             font-size: 14px;
-            font-weight: 500;
             transition: color 0.3s;
         }
 
-        .nav-menu a:hover {
-            color: var(--accent-neon);
+        .nav-links a:hover {
+            color: var(--accent-green);
         }
 
-        .btn-action {
-            background: linear-gradient(135deg, var(--accent-neon), var(--accent-blue));
-            color: #fff;
-            padding: 10px 20px;
-            border-radius: 99px;
-            text-decoration: none;
+        .btn-live {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 255, 102, 0.1);
+            border: 1px solid var(--accent-green);
+            color: var(--accent-green);
+            padding: 8px 16px;
+            border-radius: 20px;
             font-weight: 700;
-            font-size: 14px;
-            transition: transform 0.2s, box-shadow 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
+            font-size: 13px;
         }
 
-        .btn-action:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(34, 197, 94, 0.3);
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent-green);
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
         }
 
-        /* Hero Section */
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 255, 102, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(0, 255, 102, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 255, 102, 0); }
+        }
+
+        /* --- Hero Section --- */
         .hero {
-            padding: 100px 24px 60px;
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: 1.2fr 0.8fr;
-            gap: 40px;
-            align-items: center;
+            padding: 60px 20px;
+            text-align: center;
+            background: radial-gradient(circle at top, rgba(0, 255, 102, 0.08) 0%, transparent 70%);
+            border-bottom: 1px solid var(--border-color);
         }
 
-        .hero-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(34, 197, 94, 0.1);
-            border: 1px solid rgba(34, 197, 94, 0.2);
-            color: var(--accent-neon);
+        .hero-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .hero-title-img {
+            max-width: 280px;
+            height: auto;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 15px rgba(0, 255, 102, 0.3));
+        }
+
+        .hero h1 {
+            font-size: 38px;
+            font-weight: 900;
+            margin-bottom: 15px;
+            background: linear-gradient(180deg, #ffffff 0%, var(--text-muted) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            color: var(--text-muted);
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+
+        .hero-tags {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-white);
             padding: 6px 14px;
-            border-radius: 99px;
+            border-radius: 6px;
             font-size: 13px;
             font-weight: 600;
-            margin-bottom: 20px;
         }
 
-        .hero-title {
-            font-size: 52px;
-            font-weight: 800;
-            line-height: 1.15;
-            margin-bottom: 20px;
-            background: linear-gradient(180deg, #ffffff 0%, #9ca3af 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        /* --- Live Stream Banner Section --- */
+        .live-banner-section {
+            max-width: 1320px;
+            margin: 40px auto;
+            padding: 0 20px;
         }
 
-        .hero-title span {
-            background: linear-gradient(135deg, var(--accent-neon), var(--accent-blue));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .hero-desc {
-            font-size: 18px;
-            color: var(--text-muted);
-            margin-bottom: 32px;
-            max-width: 540px;
-        }
-
-        .hero-stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            padding: 20px;
+        .live-card {
+            background: linear-gradient(135deg, var(--bg-card) 0%, #0d2216 100%);
+            border: 1px solid var(--accent-green);
             border-radius: 16px;
-        }
-
-        .stat-item h4 {
-            font-size: 24px;
-            color: var(--accent-neon);
-            font-weight: 800;
-        }
-
-        .stat-item p {
-            font-size: 12px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            font-weight: 600;
-        }
-
-        .hero-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 24px;
             padding: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            box-shadow: 0 10px 30px rgba(0, 255, 102, 0.1);
+        }
+
+        .live-card-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .live-card-info img {
+            height: 60px;
+            width: auto;
+        }
+
+        .live-card-text h3 {
+            font-size: 24px;
+            color: var(--text-white);
+            margin-bottom: 4px;
+        }
+
+        .live-card-text p {
+            color: var(--accent-green);
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        /* --- Section Titles --- */
+        .section-header {
+            max-width: 1320px;
+            margin: 50px auto 25px auto;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .section-header h2 {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--text-white);
+        }
+
+        .section-header .line {
+            flex: 1;
+            height: 1px;
+            background: var(--border-color);
+        }
+
+        /* --- Video Containers & Responsive Grids --- */
+        .container {
+            max-width: 1320px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .videos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 25px;
+        }
+
+        .shorts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .video-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.3s, border-color 0.3s;
+        }
+
+        .video-card:hover {
+            transform: translateY(-6px);
+            border-color: var(--accent-green);
+        }
+
+        .iframe-wrapper {
             position: relative;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+        }
+
+        .iframe-wrapper.shorts-wrapper {
+            padding-bottom: 177.77%; /* 9:16 Aspect Ratio */
+        }
+
+        .iframe-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        /* --- Footer --- */
+        .footer {
+            background-color: var(--bg-card);
+            border-top: 1px solid var(--border-color);
+            padding: 40px 20px;
+            margin-top: 80px;
             text-align: center;
         }
 
-        .hero-card img.main-logo {
-            width: 140px;
-            height: auto;
-            margin-bottom: 20px;
-            filter: drop-shadow(0 0 15px rgba(34, 197, 94, 0.4));
-        }
-
-        /* Section Universal Layout */
-        .section-container {
-            max-width: 1200px;
-            margin: 80px auto;
-            padding: 0 24px;
-        }
-
-        .section-header {
-            margin-bottom: 40px;
-        }
-
-        .section-tag {
-            color: var(--accent-neon);
-            font-size: 13px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 8px;
-            display: block;
-        }
-
-        .section-title {
-            font-size: 32px;
-            font-weight: 800;
-            color: #fff;
-        }
-
-        /* Grid Layouts */
-        .grid-3 {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 24px;
-        }
-
-        .grid-4 {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 20px;
-        }
-
-        /* Content Cards */
-        .card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 20px;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .card:hover {
-            border-color: var(--border-hover);
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(34, 197, 94, 0.1);
-        }
-
-        .card-type {
-            display: inline-block;
-            font-size: 11px;
-            font-weight: 700;
-            padding: 4px 10px;
-            border-radius: 6px;
-            margin-bottom: 12px;
-            text-transform: uppercase;
-        }
-
-        .type-live { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
-        .type-video { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
-        .type-shorts { background: rgba(34, 197, 94, 0.15); color: #22c55e; }
-
-        .card-thumb {
-            width: 100%;
-            height: 180px;
-            background-color: #1a2232;
-            border-radius: 10px;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .card-thumb img {
-            width: 50px;
-            opacity: 0.8;
-        }
-
-        .card-title {
-            font-size: 16px;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 8px;
-        }
-
-        .card-desc {
-            font-size: 13px;
-            color: var(--text-muted);
-        }
-
-        /* Community Posts */
-        .post-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 24px;
-        }
-
-        .post-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 16px;
-        }
-
-        .post-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-        }
-
-        .post-time {
-            font-size: 12px;
-            color: var(--text-muted);
-        }
-
-        /* Footer */
-        .footer {
-            background: #06080b;
-            border-top: 1px solid var(--border-color);
-            padding: 40px 24px;
-            margin-top: 100px;
-        }
-
-        .footer-content {
-            max-width: 1200px;
+        .footer-container {
+            max-width: 1320px;
             margin: 0 auto;
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 20px;
+            gap: 15px;
         }
 
-        .dev-credit {
+        .footer-logo {
+            height: 40px;
+        }
+
+        .developer-credit {
             font-size: 14px;
             color: var(--text-muted);
+            border-top: 1px solid var(--border-color);
+            padding-top: 15px;
+            width: 100%;
+            max-width: 600px;
         }
 
-        .dev-credit span {
-            color: var(--accent-neon);
-            font-weight: 700;
+        .developer-credit strong {
+            color: var(--accent-green);
         }
 
-        /* Responsive Fixes */
         @media (max-width: 768px) {
-            .hero { grid-template-columns: 1fr; }
-            .hero-title { font-size: 36px; }
-            .nav-menu { display: none; }
+            .videos-grid, .shorts-grid {
+                grid-template-columns: 1fr;
+            }
+            .hero h1 { font-size: 28px; }
+            .live-card { flex-direction: column; text-align: center; }
+            .live-card-info { flex-direction: column; }
         }
     </style>
 </head>
 <body>
 
-    <div class="glow-bg"></div>
-
-    <!-- Navigasyon Barı -->
-    <nav class="navbar">
+    <!-- Navbar -->
+    <header class="navbar">
         <div class="nav-container">
-            <a href="#" class="brand">
-                <img src="logo.png" alt="EmcükYTB Logo">
-                <span>EmcükYTB</span>
+            <a href="#" class="brand-logo">
+                <img src="ytlogo.png" alt="Emcük YTB Logo">
             </a>
-            <ul class="nav-menu">
-                <li><a href="#yayinlar">Canlı Yayınlar</a></li>
-                <li><a href="#videolar">Videolar</a></li>
-                <li><a href="#shorts">Shorts</a></li>
-                <li><a href="#postlar">Topluluk</a></li>
-            </ul>
-            <a href="https://www.youtube.com/@EmcükYTB" target="_blank" class="btn-action">
-                <img src="ytlogo.png" style="height: 18px; width: auto;" alt="YT">
-                Abone Ol
-            </a>
-        </div>
-    </nav>
-
-    <!-- Hero Bölümü -->
-    <header class="hero">
-        <div class="hero-left reveal">
-            <div class="hero-badge">
-                <span style="width: 8px; height: 8px; background: var(--accent-neon); border-radius: 50%;"></span>
-                Resmi İçerik & Topluluk Portalı
-            </div>
-            <h1 class="hero-title">Dijital Evrene <span>EmcükYTB</span> İmzası</h1>
-            <p class="hero-desc">Oyunlar, özel yazılım projeleri, canlı yayınlar ve güncel YouTube içeriklerinin tek noktadan erişim merkezi.</p>
-            
-            <div class="hero-stats">
-                <div class="stat-item">
-                    <h4>37.1K+</h4>
-                    <p>Abone</p>
+            <nav class="nav-links">
+                <a href="#uzun-videolar">Videolar</a>
+                <a href="#son-shorts">Shorts</a>
+                <a href="#populer-shorts">Popüler</a>
+                <div class="btn-live">
+                    <span class="live-dot"></span>
+                    <span>CANLI YAYIN</span>
                 </div>
-                <div class="stat-item">
-                    <h4>1.2K+</h4>
-                    <p>Video</p>
-                </div>
-                <div class="stat-item">
-                    <h4>19.6M+</h4>
-                    <p>İzlenme</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="hero-right reveal">
-            <div class="hero-card">
-                <img src="logo.png" class="main-logo" alt="Main Logo">
-                <h3 style="color:#fff; font-size: 20px; margin-bottom: 8px;">EmcükYTB Platform</h3>
-                <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">
-                    Türkiye • 26 Haz 2025 Tarihinde Katıldı
-                </p>
-                <div style="display: flex; justify-content: center; gap: 10px;">
-                    <img src="xms.png" alt="XMS" style="height: 32px; opacity: 0.8;">
-                    <img src="ytlogo.png" alt="YT" style="height: 32px; opacity: 0.8;">
-                </div>
-            </div>
+            </nav>
         </div>
     </header>
 
-    <!-- Canlı Yayınlar -->
-    <section id="yayinlar" class="section-container">
-        <div class="section-header reveal">
-            <span class="section-tag">CANLI YAYIN ALANI</span>
-            <h2 class="section-title">Son Canlı Yayınlar & Tekrarlar</h2>
-        </div>
-        <div class="grid-3">
-            <div class="card reveal">
-                <div class="card-thumb">
-                    <img src="ytlogo.png" alt="Play">
-                </div>
-                <span class="card-type type-live">● CANLI TEKRARI</span>
-                <h3 class="card-title">Büyük Topluluk & Oyun Yayını #42</h3>
-                <p class="card-desc">Takipçilerle sohbet, proje geliştirmeleri ve rekabetçi turnuva maçları.</p>
-            </div>
-            <div class="card reveal">
-                <div class="card-thumb">
-                    <img src="ytlogo.png" alt="Play">
-                </div>
-                <span class="card-type type-live">● CANLI TEKRARI</span>
-                <h3 class="card-title">Yazılım & Oyun Motoru Kodlama</h3>
-                <p class="card-desc">Özel projelerimizin arka plan mimarisi ve live coding yayını.</p>
+    <!-- Hero Section -->
+    <section class="hero reveal">
+        <div class="hero-container">
+            <img src="logo.png" alt="Emcük YTB Canlı Yayın" class="hero-title-img">
+            <h1>PUBG Mobile İçerik ve Canlı Yayın Platformu</h1>
+            <p>Hassasiyet ayarları, Victor maceraları, eğlenceli anlar ve en güncel PUBG Mobile içerikleri!</p>
+            <div class="hero-tags">
+                <span class="tag">🎮 PUBG Mobile</span>
+                <span class="tag">🔥 Victor Gaming</span>
+                <span class="tag">🎯 Recoil Zero</span>
+                <span class="tag">⚡ 120 FPS</span>
             </div>
         </div>
     </section>
 
-    <!-- Son Videolar -->
-    <section id="videolar" class="section-container">
-        <div class="section-header reveal">
-            <span class="section-tag">YOUTUBE İÇERİKLERİ</span>
-            <h2 class="section-title">Öne Çıkan Videolar</h2>
+    <!-- Canlı Yayın Banner -->
+    <section class="live-banner-section reveal">
+        <div class="live-card">
+            <div class="live-card-info">
+                <img src="xms.png" alt="XMS Victor PUBG">
+                <div class="live-card-text">
+                    <h3>Victor PUBG Mobile Arenasında!</h3>
+                    <p>● Canlı Yayınlar Ve En Yeni Taktikler Yayında</p>
+                </div>
+            </div>
+            <a href="https://www.youtube.com/@EmcükYTB" target="_blank" style="text-decoration: none;">
+                <div class="btn-live" style="padding: 12px 24px; font-size: 15px; cursor: pointer;">
+                    <span class="live-dot"></span>
+                    <span>YAYINA KATIL</span>
+                </div>
+            </a>
         </div>
-        <div class="grid-3">
-            <div class="card reveal">
-                <div class="card-thumb">
-                    <img src="ytlogo.png" alt="Play">
+    </section>
+
+    <!-- Son Videolar Section -->
+    <section id="uzun-videolar" class="container reveal">
+        <div class="section-header" style="margin-left: 0; margin-right: 0; padding: 0;">
+            <h2>Son Eklenen Uzun Videolar</h2>
+            <div class="line"></div>
+        </div>
+
+        <div class="videos-grid">
+            <div class="video-card">
+                <div class="iframe-wrapper">
+                    <iframe src="https://www.youtube.com/embed/Rc_u5yynIYY" title="AİLE HERŞEYDİR OYUNA PARA YATIRMAYIN #pubgmobile #youtube" allowfullscreen></iframe>
                 </div>
-                <span class="card-type type-video">VİDEO</span>
-                <h3 class="card-title">Yeni Proje Duyurusu ve İnceleme</h3>
-                <p class="card-desc">Kanalda geliştirdiğimiz en son mod ve içerik paketinin detayları.</p>
             </div>
-            <div class="card reveal">
-                <div class="card-thumb">
-                    <img src="ytlogo.png" alt="Play">
+            <div class="video-card">
+                <div class="iframe-wrapper">
+                    <iframe src="https://www.youtube.com/embed/K-G3SzlRGVA" title="GRUP KODU NEREYE YAZILIR ve MİDASBUY'DAN NASIL UC YÜKLENİR ?" allowfullscreen></iframe>
                 </div>
-                <span class="card-type type-video">VİDEO</span>
-                <h3 class="card-title">Rehber & İpuçları Serisi #12</h3>
-                <p class="card-desc">Oyun deneyiminizi katlayacak en pratik yöntemler ve yapılandırmalar.</p>
             </div>
-            <div class="card reveal">
-                <div class="card-thumb">
-                    <img src="ytlogo.png" alt="Play">
+            <div class="video-card">
+                <div class="iframe-wrapper">
+                    <iframe src="https://www.youtube.com/embed/Rvjfvah4WlM" title="EN İYİ PUBG MOBILE HASSASİYET 2026! Recoil SIFIR!" allowfullscreen></iframe>
                 </div>
-                <span class="card-type type-video">VİDEO</span>
-                <h3 class="card-title">Özel Sistem Testi ve Sonuçlar</h3>
-                <p class="card-desc">Performans iyileştirmeleri ve güncel sistemlerin canlı analizi.</p>
             </div>
         </div>
     </section>
 
-    <!-- Shorts Bölümü -->
-    <section id="shorts" class="section-container">
-        <div class="section-header reveal">
-            <span class="section-tag">DİKİNE İÇERİKLER</span>
-            <h2 class="section-title">En Çok İzlenen Shorts</h2>
+    <!-- Son Shorts Section -->
+    <section id="son-shorts" class="container reveal">
+        <div class="section-header" style="margin-left: 0; margin-right: 0; padding: 0;">
+            <h2>Son Shorts Videoları</h2>
+            <div class="line"></div>
         </div>
-        <div class="grid-4">
-            <div class="card reveal">
-                <span class="card-type type-shorts">SHORTS</span>
-                <h3 class="card-title">Efsane Anlar #1</h3>
-                <p class="card-desc">Yayın sırasındaki komik ve heyecanlı sahneler.</p>
+
+        <div class="shorts-grid">
+            <div class="video-card">
+                <div class="iframe-wrapper shorts-wrapper">
+                    <iframe src="https://www.youtube.com/embed/HftrRzOEHGU" title="Soruyu Bilen Like Attı" allowfullscreen></iframe>
+                </div>
             </div>
-            <div class="card reveal">
-                <span class="card-type type-shorts">SHORTS</span>
-                <h3 class="card-title">Hızlı Kod İpucu</h3>
-                <p class="card-desc">60 saniyede yazılım hilesi.</p>
+            <div class="video-card">
+                <div class="iframe-wrapper shorts-wrapper">
+                    <iframe src="https://www.youtube.com/embed/OOdrOMtucvE" title="Yapamazsın Aslan Parçası" allowfullscreen></iframe>
+                </div>
             </div>
-            <div class="card reveal">
-                <span class="card-type type-shorts">SHORTS</span>
-                <h3 class="card-title">Oyun İçi Bug</h3>
-                <p class="card-desc">Görünce inanamayacağınız anlar.</p>
-            </div>
-            <div class="card reveal">
-                <span class="card-type type-shorts">SHORTS</span>
-                <h3 class="card-title">Güncelleme Özeti</h3>
-                <p class="card-desc">Yeni gelen yamada öne çıkanlar.</p>
+            <div class="video-card">
+                <div class="iframe-wrapper shorts-wrapper">
+                    <iframe src="https://www.youtube.com/embed/j8Iz1UfJ6qc" title="İhtiyacı Olan Gelsin" allowfullscreen></iframe>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- Topluluk Postları -->
-    <section id="postlar" class="section-container">
-        <div class="section-header reveal">
-            <span class="section-tag">TOPLULUK AKIŞI</span>
-            <h2 class="section-title">Son Duyurular & Gönderiler</h2>
+    <!-- En Popüler Shorts Section -->
+    <section id="populer-shorts" class="container reveal">
+        <div class="section-header" style="margin-left: 0; margin-right: 0; padding: 0;">
+            <h2>En Popüler Shorts Videoları</h2>
+            <div class="line"></div>
         </div>
-        <div class="grid-3">
-            <div class="post-card reveal">
-                <div class="post-header">
-                    <img src="logo.png" class="post-avatar" alt="Avatar">
-                    <div>
-                        <strong style="color: #fff; font-size: 14px;">EmcükYTB</strong>
-                        <div class="post-time">2 gün önce paylaşıldı</div>
-                    </div>
+
+        <div class="shorts-grid">
+            <div class="video-card">
+                <div class="iframe-wrapper shorts-wrapper">
+                    <iframe src="https://www.youtube.com/embed/vDWUp47i1so" title="Victor Bekleme Alaninda Ban Yedi" allowfullscreen></iframe>
                 </div>
-                <p style="color: var(--text-muted); font-size: 14px;">
-                    Yeni web sitemiz tamamen aktif! Yakında siteye özel sürpriz indirme bağlantıları ve kodlama araçları eklenecektir. Takipte kalın!
-                </p>
             </div>
-            <div class="post-card reveal">
-                <div class="post-header">
-                    <img src="logo.png" class="post-avatar" alt="Avatar">
-                    <div>
-                        <strong style="color: #fff; font-size: 14px;">EmcükYTB</strong>
-                        <div class="post-time">5 gün önce paylaşıldı</div>
-                    </div>
+            <div class="video-card">
+                <div class="iframe-wrapper shorts-wrapper">
+                    <iframe src="https://www.youtube.com/embed/jvnk7E3h8cc" title="Victor Derki" allowfullscreen></iframe>
                 </div>
-                <p style="color: var(--text-muted); font-size: 14px;">
-                    Bu hafta sonu özel canlı yayın olacak! Maç yapacağımız haritayı belirlemek için kanaldaki ankete katılmayı unutmayın.
-                </p>
+            </div>
+            <div class="video-card">
+                <div class="iframe-wrapper shorts-wrapper">
+                    <iframe src="https://www.youtube.com/embed/FCXen6IYct8" title="PUBG Mobile Yeni Cihaz Aldim (ŞAKA)" allowfullscreen></iframe>
+                </div>
             </div>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-content">
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <img src="logo.png" style="height: 28px; width: auto;" alt="Logo">
-                <p style="color: var(--text-muted); font-size: 13px;">&copy; 2026 EmcükYTB. Tüm Hakları Saklıdır.</p>
-            </div>
-            <div class="dev-credit">
-                Geliştirici / Developer: <span>Burak Dönmez - Marmara Games</span>
+    <footer class="footer reveal">
+        <div class="footer-container">
+            <img src="ytlogo.png" alt="Emcük YTB" class="footer-logo">
+            <p style="color: var(--text-muted); font-size: 14px;">© 2026 Emcük YTB - Tüm Hakları Saklıdır.</p>
+            <div class="developer-credit">
+                Geliştirici / Developer: <strong>Burak Dönmez Marmara Games</strong>
             </div>
         </div>
     </footer>
 
-    <!-- Aşağı Kaydırdıkça Animasyon Çıkarma JS -->
+    <!-- Scroll Reveal Animation Script -->
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const reveals = document.querySelectorAll(".reveal");
+        function reveal() {
+            var reveals = document.querySelectorAll(".reveal");
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var elementTop = reveals[i].getBoundingClientRect().top;
+                var elementVisible = 100;
 
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add("active");
-                    }
-                });
-            }, {
-                threshold: 0.15
-            });
+                if (elementTop < windowHeight - elementVisible) {
+                    reveals[i].classList.add("active");
+                }
+            }
+        }
 
-            reveals.forEach(reveal => {
-                observer.observe(reveal);
-            });
-        });
+        window.addEventListener("scroll", reveal);
+        // İlk açılışta ekrandaki elemanları göstermek için tetikle
+        reveal();
     </script>
 </body>
 </html>
