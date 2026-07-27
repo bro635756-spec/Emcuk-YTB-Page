@@ -1,1 +1,612 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EmcükYTB - Official Platform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0d12;
+            --bg-card: #121824;
+            --accent-green: #10b981;
+            --accent-neon: #22c55e;
+            --accent-blue: #3b82f6;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(34, 197, 94, 0.3);
+        }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Arka Plan Glow Efektleri */
+        .glow-bg {
+            position: fixed;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(34, 197, 94, 0.12) 0%, rgba(59, 130, 246, 0.08) 50%, transparent 70%);
+            z-index: -1;
+            pointer-events: none;
+            filter: blur(80px);
+        }
+
+        /* Scroll Animasyonu Sınıfları */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Navbar */
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(10, 13, 18, 0.8);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 16px 0;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: #fff;
+            font-weight: 800;
+            font-size: 20px;
+        }
+
+        .brand img {
+            height: 36px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 28px;
+            align-items: center;
+            list-style: none;
+        }
+
+        .nav-menu a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-menu a:hover {
+            color: var(--accent-neon);
+        }
+
+        .btn-action {
+            background: linear-gradient(135deg, var(--accent-neon), var(--accent-blue));
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 99px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 14px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(34, 197, 94, 0.3);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 100px 24px 60px;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+            color: var(--accent-neon);
+            padding: 6px 14px;
+            border-radius: 99px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .hero-title {
+            font-size: 52px;
+            font-weight: 800;
+            line-height: 1.15;
+            margin-bottom: 20px;
+            background: linear-gradient(180deg, #ffffff 0%, #9ca3af 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-title span {
+            background: linear-gradient(135deg, var(--accent-neon), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-desc {
+            font-size: 18px;
+            color: var(--text-muted);
+            margin-bottom: 32px;
+            max-width: 540px;
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            border-radius: 16px;
+        }
+
+        .stat-item h4 {
+            font-size: 24px;
+            color: var(--accent-neon);
+            font-weight: 800;
+        }
+
+        .stat-item p {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .hero-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 30px;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+
+        .hero-card img.main-logo {
+            width: 140px;
+            height: auto;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 15px rgba(34, 197, 94, 0.4));
+        }
+
+        /* Section Universal Layout */
+        .section-container {
+            max-width: 1200px;
+            margin: 80px auto;
+            padding: 0 24px;
+        }
+
+        .section-header {
+            margin-bottom: 40px;
+        }
+
+        .section-tag {
+            color: var(--accent-neon);
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .section-title {
+            font-size: 32px;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        /* Grid Layouts */
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        /* Content Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(34, 197, 94, 0.1);
+        }
+
+        .card-type {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+        }
+
+        .type-live { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+        .type-video { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
+        .type-shorts { background: rgba(34, 197, 94, 0.15); color: #22c55e; }
+
+        .card-thumb {
+            width: 100%;
+            height: 180px;
+            background-color: #1a2232;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-thumb img {
+            width: 50px;
+            opacity: 0.8;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .card-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* Community Posts */
+        .post-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .post-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+
+        .post-time {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Footer */
+        .footer {
+            background: #06080b;
+            border-top: 1px solid var(--border-color);
+            padding: 40px 24px;
+            margin-top: 100px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .dev-credit {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .dev-credit span {
+            color: var(--accent-neon);
+            font-weight: 700;
+        }
+
+        /* Responsive Fixes */
+        @media (max-width: 768px) {
+            .hero { grid-template-columns: 1fr; }
+            .hero-title { font-size: 36px; }
+            .nav-menu { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="glow-bg"></div>
+
+    <!-- Navigasyon Barı -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="brand">
+                <img src="logo.png" alt="EmcükYTB Logo">
+                <span>EmcükYTB</span>
+            </a>
+            <ul class="nav-menu">
+                <li><a href="#yayinlar">Canlı Yayınlar</a></li>
+                <li><a href="#videolar">Videolar</a></li>
+                <li><a href="#shorts">Shorts</a></li>
+                <li><a href="#postlar">Topluluk</a></li>
+            </ul>
+            <a href="https://www.youtube.com/@EmcükYTB" target="_blank" class="btn-action">
+                <img src="ytlogo.png" style="height: 18px; width: auto;" alt="YT">
+                Abone Ol
+            </a>
+        </div>
+    </nav>
+
+    <!-- Hero Bölümü -->
+    <header class="hero">
+        <div class="hero-left reveal">
+            <div class="hero-badge">
+                <span style="width: 8px; height: 8px; background: var(--accent-neon); border-radius: 50%;"></span>
+                Resmi İçerik & Topluluk Portalı
+            </div>
+            <h1 class="hero-title">Dijital Evrene <span>EmcükYTB</span> İmzası</h1>
+            <p class="hero-desc">Oyunlar, özel yazılım projeleri, canlı yayınlar ve güncel YouTube içeriklerinin tek noktadan erişim merkezi.</p>
+            
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <h4>37.1K+</h4>
+                    <p>Abone</p>
+                </div>
+                <div class="stat-item">
+                    <h4>1.2K+</h4>
+                    <p>Video</p>
+                </div>
+                <div class="stat-item">
+                    <h4>19.6M+</h4>
+                    <p>İzlenme</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="hero-right reveal">
+            <div class="hero-card">
+                <img src="logo.png" class="main-logo" alt="Main Logo">
+                <h3 style="color:#fff; font-size: 20px; margin-bottom: 8px;">EmcükYTB Platform</h3>
+                <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">
+                    Türkiye • 26 Haz 2025 Tarihinde Katıldı
+                </p>
+                <div style="display: flex; justify-content: center; gap: 10px;">
+                    <img src="xms.png" alt="XMS" style="height: 32px; opacity: 0.8;">
+                    <img src="ytlogo.png" alt="YT" style="height: 32px; opacity: 0.8;">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Canlı Yayınlar -->
+    <section id="yayinlar" class="section-container">
+        <div class="section-header reveal">
+            <span class="section-tag">CANLI YAYIN ALANI</span>
+            <h2 class="section-title">Son Canlı Yayınlar & Tekrarlar</h2>
+        </div>
+        <div class="grid-3">
+            <div class="card reveal">
+                <div class="card-thumb">
+                    <img src="ytlogo.png" alt="Play">
+                </div>
+                <span class="card-type type-live">● CANLI TEKRARI</span>
+                <h3 class="card-title">Büyük Topluluk & Oyun Yayını #42</h3>
+                <p class="card-desc">Takipçilerle sohbet, proje geliştirmeleri ve rekabetçi turnuva maçları.</p>
+            </div>
+            <div class="card reveal">
+                <div class="card-thumb">
+                    <img src="ytlogo.png" alt="Play">
+                </div>
+                <span class="card-type type-live">● CANLI TEKRARI</span>
+                <h3 class="card-title">Yazılım & Oyun Motoru Kodlama</h3>
+                <p class="card-desc">Özel projelerimizin arka plan mimarisi ve live coding yayını.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Son Videolar -->
+    <section id="videolar" class="section-container">
+        <div class="section-header reveal">
+            <span class="section-tag">YOUTUBE İÇERİKLERİ</span>
+            <h2 class="section-title">Öne Çıkan Videolar</h2>
+        </div>
+        <div class="grid-3">
+            <div class="card reveal">
+                <div class="card-thumb">
+                    <img src="ytlogo.png" alt="Play">
+                </div>
+                <span class="card-type type-video">VİDEO</span>
+                <h3 class="card-title">Yeni Proje Duyurusu ve İnceleme</h3>
+                <p class="card-desc">Kanalda geliştirdiğimiz en son mod ve içerik paketinin detayları.</p>
+            </div>
+            <div class="card reveal">
+                <div class="card-thumb">
+                    <img src="ytlogo.png" alt="Play">
+                </div>
+                <span class="card-type type-video">VİDEO</span>
+                <h3 class="card-title">Rehber & İpuçları Serisi #12</h3>
+                <p class="card-desc">Oyun deneyiminizi katlayacak en pratik yöntemler ve yapılandırmalar.</p>
+            </div>
+            <div class="card reveal">
+                <div class="card-thumb">
+                    <img src="ytlogo.png" alt="Play">
+                </div>
+                <span class="card-type type-video">VİDEO</span>
+                <h3 class="card-title">Özel Sistem Testi ve Sonuçlar</h3>
+                <p class="card-desc">Performans iyileştirmeleri ve güncel sistemlerin canlı analizi.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Shorts Bölümü -->
+    <section id="shorts" class="section-container">
+        <div class="section-header reveal">
+            <span class="section-tag">DİKİNE İÇERİKLER</span>
+            <h2 class="section-title">En Çok İzlenen Shorts</h2>
+        </div>
+        <div class="grid-4">
+            <div class="card reveal">
+                <span class="card-type type-shorts">SHORTS</span>
+                <h3 class="card-title">Efsane Anlar #1</h3>
+                <p class="card-desc">Yayın sırasındaki komik ve heyecanlı sahneler.</p>
+            </div>
+            <div class="card reveal">
+                <span class="card-type type-shorts">SHORTS</span>
+                <h3 class="card-title">Hızlı Kod İpucu</h3>
+                <p class="card-desc">60 saniyede yazılım hilesi.</p>
+            </div>
+            <div class="card reveal">
+                <span class="card-type type-shorts">SHORTS</span>
+                <h3 class="card-title">Oyun İçi Bug</h3>
+                <p class="card-desc">Görünce inanamayacağınız anlar.</p>
+            </div>
+            <div class="card reveal">
+                <span class="card-type type-shorts">SHORTS</span>
+                <h3 class="card-title">Güncelleme Özeti</h3>
+                <p class="card-desc">Yeni gelen yamada öne çıkanlar.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Topluluk Postları -->
+    <section id="postlar" class="section-container">
+        <div class="section-header reveal">
+            <span class="section-tag">TOPLULUK AKIŞI</span>
+            <h2 class="section-title">Son Duyurular & Gönderiler</h2>
+        </div>
+        <div class="grid-3">
+            <div class="post-card reveal">
+                <div class="post-header">
+                    <img src="logo.png" class="post-avatar" alt="Avatar">
+                    <div>
+                        <strong style="color: #fff; font-size: 14px;">EmcükYTB</strong>
+                        <div class="post-time">2 gün önce paylaşıldı</div>
+                    </div>
+                </div>
+                <p style="color: var(--text-muted); font-size: 14px;">
+                    Yeni web sitemiz tamamen aktif! Yakında siteye özel sürpriz indirme bağlantıları ve kodlama araçları eklenecektir. Takipte kalın!
+                </p>
+            </div>
+            <div class="post-card reveal">
+                <div class="post-header">
+                    <img src="logo.png" class="post-avatar" alt="Avatar">
+                    <div>
+                        <strong style="color: #fff; font-size: 14px;">EmcükYTB</strong>
+                        <div class="post-time">5 gün önce paylaşıldı</div>
+                    </div>
+                </div>
+                <p style="color: var(--text-muted); font-size: 14px;">
+                    Bu hafta sonu özel canlı yayın olacak! Maç yapacağımız haritayı belirlemek için kanaldaki ankete katılmayı unutmayın.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <img src="logo.png" style="height: 28px; width: auto;" alt="Logo">
+                <p style="color: var(--text-muted); font-size: 13px;">&copy; 2026 EmcükYTB. Tüm Hakları Saklıdır.</p>
+            </div>
+            <div class="dev-credit">
+                Geliştirici / Developer: <span>Burak Dönmez - Marmara Games</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Aşağı Kaydırdıkça Animasyon Çıkarma JS -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const reveals = document.querySelectorAll(".reveal");
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("active");
+                    }
+                });
+            }, {
+                threshold: 0.15
+            });
+
+            reveals.forEach(reveal => {
+                observer.observe(reveal);
+            });
+        });
+    </script>
+</body>
+</html>
