@@ -19,7 +19,7 @@
     <style>
         :root {
             --bg-color: #090a0f;
-            --card-bg: rgba(18, 19, 26, 0.88);
+            --card-bg: rgba(18, 19, 26, 0.92);
             --primary: #6366f1;
             --accent: #ec4899;
             --text-main: #f8fafc;
@@ -39,10 +39,6 @@
             color: var(--text-main);
             min-height: 100vh;
             overflow-x: hidden;
-            background-image: url('arkaplan.png');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
         }
 
         .glass-card {
@@ -86,7 +82,6 @@
             border-color: var(--primary);
         }
 
-        /* Özel Kaydırma Çubuğu */
         ::-webkit-scrollbar {
             width: 8px;
         }
@@ -115,14 +110,12 @@
 <body>
     <div id="root"></div>
 
-    <!-- Tüm Uygulama ve Mantık (React + Firebase + Modüller Tek Blokta) -->
     <script type="text/babel" data-type="module">
         import React, { useState, useEffect } from 'react';
         import { createRoot } from 'react-dom/client';
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, set, get, push, remove, onChildAdded } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        // --- 1. KANAL & VERİ AYARLARI (tvemcukggmail.json karşılığı) ---
         const channelData = {
             channelName: "Emcük YTB",
             channelHandle: "@EmcükYTB",
@@ -136,7 +129,6 @@
             totalVideos: "1.219"
         };
 
-        // --- 2. FIREBASE BAĞLANTISI ---
         const firebaseConfig = {
           apiKey: "AIzaSyDFobHTVqG2dt54QGokkJWDBxBFuFOniYc",
           authDomain: "emcuk-ytb.firebaseapp.com",
@@ -150,7 +142,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // --- 3. YARDIMCI MODÜLLER (Key Üretici & Bot Tarayıcı) ---
         function generate21DigitKey() {
             const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
             let result = '';
@@ -164,15 +155,12 @@
             const spamKeywords = ['bedava uc', 'hile', 'hack', 'kazandınız', 'tıkla', 'free uc', 'nitro'];
             const lowerText = text.toLowerCase();
             for (let word of spamKeywords) {
-                if (lowerText.includes(word)) {
-                    return false; // Zararlı bot kelimesi algılandı
-                }
+                if (lowerText.includes(word)) return false;
             }
-            return true; // Temiz mesaj
+            return true;
         }
 
         async function fetchLiveYouTubeData() {
-            // Canlı YouTube veri simülasyonu / entegrasyon katmanı
             return {
                 isLive: true,
                 viewers: "1,540",
@@ -182,13 +170,12 @@
             };
         }
 
-        // --- 4. ANA REACT UYGULAMASI ---
         function App() {
             const [path, setPath] = useState(window.location.pathname);
             const [user, setUser] = useState(null);
             const [emailInput, setEmailInput] = useState("");
             const [keyInput, setKeyInput] = useState("");
-            const [step, setStep] = useState(1); // 1: E-posta & reCAPTCHA, 2: 21 Haneli Anahtar Girişi
+            const [step, setStep] = useState(1);
             const [messages, setMessages] = useState([]);
             const [newMessage, setNewMessage] = useState("");
             const [ytData, setYtData] = useState(null);
@@ -203,19 +190,18 @@
 
                 fetchLiveYouTubeData().then(data => setYtData(data));
 
-                if (window.location.pathname === '/chat' || window.location.pathname === '') {
-                    const msgRef = ref(db, 'chat_messages');
-                    onChildAdded(msgRef, (snapshot) => {
-                        setMessages(prev => [...prev, { id: snapshot.key, ...snapshot.val() }]);
-                    });
-                }
+                const msgRef = ref(db, 'chat_messages');
+                onChildAdded(msgRef, (snapshot) => {
+                    setMessages(prev => [...prev, { id: snapshot.key, ...snapshot.val() }]);
+                });
 
                 return () => window.removeEventListener('popstate', handlePopState);
-            }, [path]);
+            }, []);
 
             const navigate = (url) => {
                 window.history.pushState({}, '', url);
                 setPath(url);
+                window.scrollTo(0, 0);
             };
 
             const handleRequestKey = async (e) => {
@@ -230,7 +216,7 @@
                 const keyRef = ref(db, `auth_keys/${emailInput.replace(/[.#$\/\[\]]/g, '_')}`);
                 await set(keyRef, { key: generatedKey, time: Date.now() });
 
-                alert(`[Güvenlik Doğrulaması] ${emailInput} adresine 21 haneli özel anahtar üretildi!\n\n(Test için anahtarınız): ${generatedKey}`);
+                alert(`[Güvenlik] ${emailInput} adresine 21 haneli anahtar üretildi!\n\nTest Anahtarınız: ${generatedKey}`);
                 setStep(2);
             };
 
@@ -240,10 +226,11 @@
                 const snap = await get(keyRef);
 
                 if (snap.exists() && snap.val().key === keyInput.trim()) {
-                    const userData = { email: emailInput, name: emailInput.split('@')[0] };
+                    const userData = { email: emailInput, name: emailInput.split('@')[0], joined: new Date().toLocaleDateString() };
                     setUser(userData);
                     localStorage.setItem('emcuk_user', JSON.stringify(userData));
                     alert("Giriş başarılı! Hoş geldin kankam 💘");
+                    navigate('/profil');
                 } else {
                     alert("❌ Hatalı veya süresi dolmuş 21 haneli anahtar!");
                 }
@@ -256,15 +243,15 @@
                 setEmailInput("");
                 setKeyInput("");
                 setCaptchaVerified(false);
+                navigate('/chat');
             };
 
             const sendMessage = async (e) => {
                 e.preventDefault();
                 if (!newMessage.trim() || !user) return;
 
-                // Bot ve spam filtresi kontrolü
                 if (!scanMessageForBots(newMessage)) {
-                    alert("🛡️ Bot Tarama Sistemi: Mesajınız zararlı veya yasaklı kelime içerdiği için engellendi!");
+                    alert("🛡️ Bot Tarama Sistemi: Mesajınız güvenlik filtresine takıldı!");
                     return;
                 }
 
@@ -289,25 +276,26 @@
 
             return (
                 <div className="min-h-screen flex flex-col">
-                    {/* Üst Menü Navigasyonu */}
-                    <header className="glass-card m-4 p-4 flex justify-between items-center z-50">
-                        <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
+                    <header className="glass-card m-4 p-4 flex flex-wrap justify-between items-center gap-4 z-50">
+                        <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/kanal')}>
                             <img src="ytlogo.png" alt="Logo" className="w-11 h-11 rounded-full object-cover border-2 border-indigo-500/50 pulse-anim" />
                             <div>
                                 <span className="font-extrabold text-lg tracking-wider text-white">Emcük YTB</span>
                                 <p className="text-[10px] text-pink-400 font-semibold">VİCTOR REİS DERLER 😇</p>
                             </div>
                         </div>
-                        <nav className="flex gap-6 text-sm font-semibold items-center">
-                            <button onClick={() => navigate('/')} className={`hover:text-indigo-400 transition ${path === '/' ? 'text-indigo-400 underline underline-offset-8' : 'text-slate-300'}`}>Ana Sayfa</button>
-                            <button onClick={() => navigate('/hakkinda')} className={`hover:text-indigo-400 transition ${path === '/hakkinda' ? 'text-indigo-400 underline underline-offset-8' : 'text-slate-300'}`}>Hakkında & Bilgiler</button>
+                        <nav className="flex flex-wrap gap-4 text-xs md:text-sm font-semibold items-center">
+                            <button onClick={() => navigate('/kanal')} className={`hover:text-indigo-400 transition ${path === '/kanal' || path === '/' ? 'text-indigo-400 underline underline-offset-8' : 'text-slate-300'}`}>Ana Sayfa</button>
+                            <button onClick={() => navigate('/hakkinda')} className={`hover:text-indigo-400 transition ${path === '/hakkinda' ? 'text-indigo-400 underline underline-offset-8' : 'text-slate-300'}`}>Hakkında</button>
                             <button onClick={() => navigate('/chat')} className={`hover:text-indigo-400 transition ${path === '/chat' ? 'text-indigo-400 underline underline-offset-8' : 'text-slate-300'}`}>Canlı Chat</button>
+                            <button onClick={() => navigate('/u/0/stream-yt')} className={`hover:text-indigo-400 transition ${path === '/u/0/stream-yt' ? 'text-indigo-400 underline underline-offset-8' : 'text-slate-300'}`}>Canlı Yayınlar</button>
+                            <button onClick={() => navigate('/w/9/videolar-hepsi')} className={`hover:text-indigo-400 transition ${path === '/w/9/videolar-hepsi' ? 'text-indigo-400 underline underline-offset-8' : 'text-slate-300'}`}>Tüm Videolar</button>
+                            <button onClick={() => navigate('/profil')} className={`hover:text-indigo-400 transition ${path === '/profil' ? 'text-indigo-400 underline underline-offset-8' : 'text-slate-300'}`}>Profil</button>
                         </nav>
                     </header>
 
-                    {/* Ana İçerik Alanı */}
                     <main className="flex-1 pb-12">
-                        {(path === '/' || path === '') && (
+                        {(path === '/' || path === '/kanal') && (
                             <div className="p-8 max-w-6xl mx-auto space-y-8">
                                 <div className="glass-card p-10 text-center relative overflow-hidden pulse-anim">
                                     <h1 className="text-4xl font-extrabold text-pink-400 mb-3 tracking-wide">VİCTOR REİS DERLER 😇</h1>
@@ -321,7 +309,9 @@
 
                                 <div className="flex flex-col md:flex-row items-center justify-between glass-card p-6 gap-4">
                                     <div className="flex items-center gap-4">
-                                        <img src="canliyayinyazisi.png" alt="Canlı Durum" className="h-12 animate-pulse object-contain" />
+                                        <div className="flex flex-col items-center">
+                                            <img src="logo.png" alt="Canlı Yayın Logo" className="h-14 animate-pulse object-contain mb-1" />
+                                        </div>
                                         <div>
                                             <h2 className="text-xl font-bold text-indigo-400">Emcük YTB Canlı Yayın Akışı</h2>
                                             <p className="text-slate-400 text-sm">
@@ -331,18 +321,16 @@
                                             </p>
                                         </div>
                                     </div>
-                                    <a href="https://www.youtube.com/@Emc%C3%BCkYTB/streams" target="_blank" rel="noreferrer" className="btn-primary text-sm whitespace-nowrap">
+                                    <button onClick={() => navigate('/u/0/stream-yt')} className="btn-primary text-sm whitespace-nowrap">
                                         🔴 Canlı Yayına Git
-                                    </a>
+                                    </button>
                                 </div>
                             </div>
                         )}
 
                         {path === '/hakkinda' && (
                             <div className="p-8 max-w-3xl mx-auto glass-card mt-6 space-y-6">
-                                <h2 className="text-2xl font-bold text-indigo-400 flex items-center gap-2">
-                                    💖 Kankilerim Sayfamıza Hepiniz Hoşgeldiniz
-                                </h2>
+                                <h2 className="text-2xl font-bold text-indigo-400">💖 Kankilerim Sayfamıza Hepiniz Hoşgeldiniz</h2>
                                 <p className="text-slate-300 leading-relaxed text-sm md:text-base">
                                     Selamlar Kankilerim İsmim Hakan 38 Yaşındayım Her Akşam Canlı Yayında Sizlerle Birlikte WOW Oynuyoruz. Kanalımda Ki Videolarımın %60'ı Eski Akımlar Olup Şahsıma Ait Olmayanları Sabitlediğim Yorumda Belirttim. Video Sahibi Olan Arkadaşlarım Kanıtı Olduğu Takdirde Videoları Bana Ulaşarak Kaldırma Talebinde Bulunabilir 💘
                                 </p>
@@ -356,7 +344,6 @@
                                     <b>YASAL UYARI:</b> Her Akşam Açtığım Canlı Yayınların Ekran Kaydını Almaktayım, Canlı Yayınımda Şahsıma Edilen KÜFÜR /ARGO Kelimelerin Gerekli Kaydını Alarak, Küfür Edenler Hakkında CUMHURİYET SAVCILIĞINA SUÇ DUYURUSUNDA Bulunduğumu Lütfen Unutmayin 👮 <br/><br/>
                                     <span className="font-bold text-pink-400 text-sm">SAYGIDA MECBUR SEVGİDE ÖZGÜRSÜNÜZ 💝</span>
                                 </div>
-                                <img src="victorkomik.png" alt="Victor Komik" className="rounded-2xl w-full object-cover max-h-72 border border-slate-800 shadow-xl" />
                             </div>
                         )}
 
@@ -388,7 +375,6 @@
                                                     required
                                                     className="w-full"
                                                 />
-                                                {/* reCAPTCHA Simülasyon / Doğrulama Alanı */}
                                                 <div className="flex justify-center my-2">
                                                     <div 
                                                         onClick={() => setCaptchaVerified(!captchaVerified)} 
@@ -402,7 +388,7 @@
                                             </form>
                                         ) : (
                                             <form onSubmit={handleVerifyKey} className="space-y-4">
-                                                <p className="text-xs text-slate-400">E-postanıza (veya sistem simülasyonuna) gönderilen 21 haneli anahtarı girin:</p>
+                                                <p className="text-xs text-slate-400">E-postanıza gönderilen 21 haneli anahtarı girin:</p>
                                                 <input 
                                                     type="text" 
                                                     value={keyInput} 
@@ -451,9 +437,65 @@
                                 )}
                             </div>
                         )}
+
+                        {path === '/profil' && (
+                            <div className="p-8 max-w-md mx-auto glass-card mt-6 text-center space-y-5">
+                                <h2 className="text-2xl font-bold text-indigo-400">Kullanıcı Profilim</h2>
+                                {user ? (
+                                    <div className="space-y-4 text-left bg-slate-900/80 p-6 rounded-2xl border border-slate-800">
+                                        <p>👤 <b>Kullanıcı Adı:</b> {user.name}</p>
+                                        <p>📩 <b>E-posta:</b> {user.email}</p>
+                                        <p>🛡️ <b>Doğrulama:</b> 21 Haneli Anahtar Onaylı</p>
+                                        <p>📅 <b>Kayıt Tarihi:</b> {user.joined || "Bugün"}</p>
+                                        <button onClick={handleLogout} className="btn-primary w-full mt-4 bg-red-600">Çıkış Yap</button>
+                                    </div>
+                                ) : (
+                                    <div className="space-y-4">
+                                        <p className="text-slate-400 text-sm">Profilinizi görmek için e-posta ile giriş yapmalısınız kankam.</p>
+                                        <button onClick={() => navigate('/chat')} className="btn-primary w-full">Giriş Yap / Kayıt Ol</button>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {path === '/u/0/stream-yt' && (
+                            <div className="p-8 max-w-4xl mx-auto glass-card mt-6 space-y-6 text-center">
+                                <div className="flex justify-center mb-2">
+                                    <img src="logo.png" alt="Canlı Yayın Logo" className="h-16 animate-pulse object-contain" />
+                                </div>
+                                <h2 className="text-3xl font-extrabold text-pink-400">🔴 Canlı Yayın Arşivi & Akış</h2>
+                                <p className="text-slate-300">Her akşam saat 20:00'de PUBG WOW modunda kesintisiz canlı yayınlardayız!</p>
+                                <div className="aspect-video bg-slate-900 rounded-2xl border border-slate-800 flex flex-col items-center justify-center p-6 space-y-4">
+                                    <p className="text-indigo-300 font-semibold">Anlık Canlı Yayın @EmcükYTB Kanalında Aktif</p>
+                                    <a href="https://www.youtube.com/@Emc%C3%BCkYTB/streams" target="_blank" rel="noreferrer" className="btn-primary">
+                                        YouTube Kanalında İzle 🚀
+                                    </a>
+                                </div>
+                            </div>
+                        )}
+
+                        {path === '/w/9/videolar-hepsi' && (
+                            <div className="p-8 max-w-5xl mx-auto glass-card mt-6 space-y-6">
+                                <h2 className="text-2xl font-bold text-indigo-400">🎬 Tüm Videolar ve Eski Akımlar ({channelData.totalVideos} Video)</h2>
+                                <p className="text-slate-300 text-sm">Kanalımdaki videoların %60'ı eski akımlar olup şahsıma ait olmayanları sabitlediğim yorumda belirttim.</p>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    {[1, 2, 3, 4, 5, 6].map((item) => (
+                                        <div key={item} className="bg-slate-900/80 p-4 rounded-2xl border border-slate-800 space-y-3">
+                                            <div className="aspect-video bg-slate-800 rounded-xl flex items-center justify-center text-indigo-400 font-bold">
+                                                Emcük Video #{item}
+                                            </div>
+                                            <h3 className="font-bold text-sm text-white">VİCTOR REİS WOW Serisi Bölüm {item}</h3>
+                                            <p className="text-xs text-slate-400">Görüntüleme: 24.5B • Beğeni: 3.2B</p>
+                                            <a href="https://www.youtube.com/@Emc%C3%BCkYTB/videos" target="_blank" rel="noreferrer" className="block text-center text-xs btn-primary py-2">
+                                                İzle
+                                            </a>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                     </main>
 
-                    {/* Alt Bilgi */}
                     <footer className="text-center py-6 text-xs text-slate-500 border-t border-slate-800/40">
                         {channelData.channelName} © 2026 - Tüm Hakları Saklıdır. {channelData.slogan}
                     </footer>
