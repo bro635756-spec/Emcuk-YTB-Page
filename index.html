@@ -9,9 +9,13 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- React ve ReactDOM CDN -->
+    <!-- React ve ReactDOM CDN (UMD) -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+
+    <!-- Firebase compat UMD (tarayıcıda global firebase sağlar) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     
     <!-- Babel Standalone (JSX Çevirici) -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -110,12 +114,12 @@
 <body>
     <div id="root"></div>
 
-    <script type="text/babel" data-type="module">
-        import React, { useState, useEffect } from 'react';
-        import { createRoot } from 'react-dom/client';
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, set, get, push, remove, onChildAdded } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    <script type="text/babel">
+        // Kullanım: global React ve ReactDOM mevcut (UMD). Babel in-browser JSX için tutuldu.
+        const { useState, useEffect } = React;
+        const { createRoot } = ReactDOM;
 
+        // Channel data aynı
         const channelData = {
             channelName: "Emcük YTB",
             channelHandle: "@EmcükYTB",
@@ -129,6 +133,7 @@
             totalVideos: "1.219"
         };
 
+        // Firebase config aynı
         const firebaseConfig = {
           apiKey: "AIzaSyDFobHTVqG2dt54QGokkJWDBxBFuFOniYc",
           authDomain: "emcuk-ytb.firebaseapp.com",
@@ -139,8 +144,9 @@
           appId: "1:583409310450:web:b14cf43e280ba87f9c8e6b"
         };
 
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
+        // Compat (UMD) API kullanılarak başlatma
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
 
         function generate21DigitKey() {
             const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -190,12 +196,18 @@
 
                 fetchLiveYouTubeData().then(data => setYtData(data));
 
-                const msgRef = ref(db, 'chat_messages');
-                onChildAdded(msgRef, (snapshot) => {
+                // Realtime DB: child_added listener
+                const msgRef = db.ref('chat_messages');
+                const childAddedHandler = (snapshot) => {
                     setMessages(prev => [...prev, { id: snapshot.key, ...snapshot.val() }]);
-                });
+                };
+                msgRef.on('child_added', childAddedHandler);
 
-                return () => window.removeEventListener('popstate', handlePopState);
+                return () => {
+                    window.removeEventListener('popstate', handlePopState);
+                    // Temizlik: listener'ı kaldır
+                    msgRef.off('child_added', childAddedHandler);
+                };
             }, []);
 
             const navigate = (url) => {
@@ -213,8 +225,9 @@
                 if (!emailInput.trim()) return;
 
                 const generatedKey = generate21DigitKey();
-                const keyRef = ref(db, `auth_keys/${emailInput.replace(/[.#$\/\[\]]/g, '_')}`);
-                await set(keyRef, { key: generatedKey, time: Date.now() });
+                const safeEmailKey = emailInput.replace(/[.#$\/\[\]]/g, '_');
+                const keyRef = db.ref(`auth_keys/${safeEmailKey}`);
+                await keyRef.set({ key: generatedKey, time: Date.now() });
 
                 alert(`[Güvenlik] ${emailInput} adresine 21 haneli anahtar üretildi!\n\nTest Anahtarınız: ${generatedKey}`);
                 setStep(2);
@@ -222,8 +235,10 @@
 
             const handleVerifyKey = async (e) => {
                 e.preventDefault();
-                const keyRef = ref(db, `auth_keys/${emailInput.replace(/[.#$\/\[\]]/g, '_')}`);
-                const snap = await get(keyRef);
+                const safeEmailKey = emailInput.replace(/[.#$\/\[\]]/g, '_');
+                const keyRef = db.ref(`auth_keys/${safeEmailKey}`);
+                // once('value') ile çek
+                const snap = await keyRef.once('value');
 
                 if (snap.exists() && snap.val().key === keyInput.trim()) {
                     const userData = { email: emailInput, name: emailInput.split('@')[0], joined: new Date().toLocaleDateString() };
@@ -255,8 +270,8 @@
                     return;
                 }
 
-                const msgRef = ref(db, 'chat_messages');
-                await push(msgRef, {
+                const msgRef = db.ref('chat_messages');
+                await msgRef.push({
                     name: user.name,
                     email: user.email,
                     text: newMessage,
@@ -270,7 +285,7 @@
                     alert("Bu işlem için yetkiniz yok!");
                     return;
                 }
-                await remove(ref(db, `chat_messages/${id}`));
+                await db.ref(`chat_messages/${id}`).remove();
                 setMessages(prev => prev.filter(m => m.id !== id));
             };
 
