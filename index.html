@@ -6,6 +6,13 @@
     <title>Emcuk YTB - Resmi Platform</title>
     <meta name="description" content="VİCTOR REİS DERLER 😇 Hakan abinin resmi yayın ve topluluk platformu.">
     <link rel="stylesheet" href="app.css">
+
+    <!-- React ve ReactDOM CDN -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- Babel Standalone (JSX Çevirici) -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
 <body>
     <div id="root"></div>
@@ -14,6 +21,14 @@
     <script type="module" src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"></script>
     <script type="module" src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js"></script>
     
-    <script type="module" src="app.js"></script>
+    <!-- Uygulama Başlatıcı -->
+    <script type="text/babel" data-type="module">
+        import React from 'react';
+        import { createRoot } from 'react-dom/client';
+        import { App } from './app.jsx';
+
+        const root = createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
 </body>
 </html>
