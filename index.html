@@ -3,182 +3,229 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#090a0f" />
-    <title>Emcük YTB - Resmi Platform</title>
-    <meta name="description" content="VİCTOR REİS DERLER 😇 Hakan abinin resmi yayın ve topluluk platformu." />
+    <meta name="theme-color" content="#000000" />
+    <title>Emcük YTB - Canlı Yayın Platformu</title>
+    <meta name="description" content="VİCTOR REİS DERLER 😇 Hakan abinin resmi canlı yayın ve topluluk platformu." />
     <link rel="icon" href="https://emcukytb.com.tr/ytlogo.png" />
 
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
 
-    <!-- React ve ReactDOM CDN (UMD) -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 
-    <!-- Firebase compat UMD (tarayıcıda global firebase sağlar) -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
-    <!-- Babel Standalone (JSX Çevirici) -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
     <style>
         :root{
-            --bg: #090a0f;
-            --card: rgba(18,19,26,0.92);
-            --primary: #6366f1;
-            --accent: #ec4899;
-            --muted: #94a3b8;
-            --neon-green: #00ff7a;
-            --neon-white: #ffffff;
-            --neon-black: #000000;
-            --glass-border: rgba(255,255,255,0.08);
+            --bg:#000000;
+            --bg-soft:#0a0a0a;
+            --card: rgba(15,15,15,0.94);
+            --card-soft: rgba(255,255,255,0.03);
+            --green:#00ff85;
+            --green-dim:#00c853;
+            --green-glow: rgba(0,255,133,0.25);
+            --white:#ffffff;
+            --muted:#a1a1aa;
+            --border: rgba(0,255,133,0.14);
+            --danger:#ff4d4d;
+            --font-body:'Plus Jakarta Sans',sans-serif;
+            --font-mono:'JetBrains Mono',monospace;
         }
 
-        *{box-sizing:border-box;margin:0;padding:0;font-family:'Plus Jakarta Sans',sans-serif;-webkit-tap-highlight-color:transparent}
-        html,body{height:100%;overflow-x:hidden;width:100%}
+        *{box-sizing:border-box;margin:0;padding:0;font-family:var(--font-body);-webkit-tap-highlight-color:transparent}
+        html,body{height:100%;overflow-x:hidden;width:100%;background:var(--bg)}
         #root{min-height:100%}
-        body{background:var(--bg); color:#f8fafc; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;min-height:100vh}
+        body{color:var(--white);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
         img{max-width:100%;display:block}
-        button{font-family:inherit}
-        input,textarea{font-family:inherit;width:100%}
+        button{font-family:inherit;cursor:pointer}
+        input{font-family:inherit;width:100%}
+        a{color:inherit}
 
-        .glass-card{
+        ::selection{background:var(--green);color:#000}
+
+        .glass{
             background:var(--card);
-            backdrop-filter: blur(12px);
+            backdrop-filter: blur(14px);
             border-radius:18px;
-            border:1px solid var(--glass-border);
-            padding:16px;
-            box-shadow:0 10px 30px rgba(0,0,0,0.6);
-            max-width:100%;
+            border:1px solid var(--border);
+            box-shadow:0 10px 34px rgba(0,0,0,0.7), 0 0 0 1px rgba(0,255,133,0.02) inset;
         }
 
-        header.glass-card{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-        .logo-row{display:flex;align-items:center;gap:12px;cursor:pointer;flex-shrink:0}
-        .logo-row img{width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid rgba(99,102,241,0.4);animation:logoPulse 3s infinite}
-        @keyframes logoPulse{
-            0%{transform:scale(1);filter:drop-shadow(0 0 6px rgba(99,102,241,0.15))}
-            50%{transform:scale(1.03);filter:drop-shadow(0 0 16px rgba(236,72,153,0.18))}
-            100%{transform:scale(1)}
+        /* ---------- Live pulsing dot ---------- */
+        .live-dot{width:9px;height:9px;border-radius:50%;background:var(--green);display:inline-block;position:relative;flex-shrink:0}
+        .live-dot::after{
+            content:'';position:absolute;inset:-4px;border-radius:50%;border:1px solid var(--green);
+            animation:livePulse 1.6s ease-out infinite;
+        }
+        @keyframes livePulse{
+            0%{transform:scale(0.6);opacity:0.9}
+            100%{transform:scale(2.4);opacity:0}
+        }
+        .live-pill{
+            display:inline-flex;align-items:center;gap:6px;background:rgba(0,255,133,0.1);
+            border:1px solid var(--border);padding:5px 12px;border-radius:999px;
+            font-family:var(--font-mono);font-weight:700;font-size:12px;letter-spacing:0.5px;color:var(--green);
         }
 
-        nav{display:flex;gap:10px;align-items:center;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none}
-        nav::-webkit-scrollbar{display:none}
-        nav button{background:none;border:none;color:#cbd5e1;font-weight:600;padding:8px 10px;border-radius:8px;cursor:pointer;white-space:nowrap;flex-shrink:0}
-        nav button:hover{color:var(--primary)}
-        nav .active{color:var(--primary);text-decoration:underline;text-underline-offset:6px}
-
-        .btn-primary{
-            background:linear-gradient(135deg,var(--primary),var(--accent));
-            color:white;padding:10px 16px;border-radius:12px;border:none;cursor:pointer;font-weight:700;box-shadow:0 6px 18px rgba(99,102,241,0.2);
-            transition:opacity .2s, transform .1s;
+        /* ---------- Header ---------- */
+        header.topbar{
+            position:sticky;top:0;z-index:80;
+            display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+            padding:12px 20px;
+            background:rgba(0,0,0,0.75);backdrop-filter:blur(16px);
+            border-bottom:1px solid var(--border);
         }
-        .btn-primary:disabled{opacity:0.5;cursor:not-allowed}
-        .btn-primary:active:not(:disabled){transform:scale(0.98)}
+        .brand{display:flex;align-items:center;gap:12px;cursor:pointer;flex-shrink:0}
+        .brand img{width:42px;height:42px;border-radius:50%;object-fit:cover;border:2px solid var(--green);box-shadow:0 0 14px var(--green-glow)}
+        .brand .name{font-weight:900;font-size:17px;line-height:1.1}
+        .brand .tag{font-size:10.5px;color:var(--green);font-weight:700;letter-spacing:0.3px}
 
-        main{padding:28px 20px 140px;max-width:1200px;margin:0 auto;width:100%}
+        nav.pillnav{display:flex;gap:6px;align-items:center;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;-webkit-overflow-scrolling:touch}
+        nav.pillnav::-webkit-scrollbar{display:none}
+        nav.pillnav button{
+            background:transparent;border:1px solid transparent;color:var(--muted);font-weight:700;
+            padding:8px 14px;border-radius:999px;white-space:nowrap;flex-shrink:0;font-size:13.5px;
+            transition:all .18s;
+        }
+        nav.pillnav button:hover{color:var(--white)}
+        nav.pillnav button.active{color:#000;background:var(--green);box-shadow:0 0 16px var(--green-glow)}
 
-        .hero{display:flex;gap:18px;align-items:center;flex-wrap:wrap;margin-bottom:20px}
-        .hero .hero-left{flex:1;min-width:260px}
-        .hero h1{font-size:34px;color:#ff79c6;margin-bottom:6px;word-break:break-word}
-        .hero p.lead{color:#a5b4fc;font-size:18px;margin-bottom:10px}
-        .hero-right{min-width:240px;display:flex;flex-direction:column;gap:10px;align-items:flex-end;flex:1}
+        /* ---------- Marquee ---------- */
+        .marquee-wrap{overflow:hidden;border-bottom:1px solid var(--border);background:var(--bg-soft);white-space:nowrap}
+        .marquee-track{display:inline-flex;animation:marqueeScroll 22s linear infinite}
+        .marquee-track span{padding:8px 26px;font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--green);letter-spacing:0.5px}
+        @keyframes marqueeScroll{
+            0%{transform:translateX(0)}
+            100%{transform:translateX(-50%)}
+        }
 
-        .stats{display:flex;gap:10px;flex-wrap:wrap}
-        .stat{background:rgba(10,10,30,0.5);padding:8px 12px;border-radius:12px;border:1px solid rgba(99,102,241,0.08);font-weight:700;color:#dbeafe}
+        main{padding:26px 20px 90px;max-width:1320px;margin:0 auto;width:100%}
 
-        .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-top:18px}
+        /* ---------- Reveal animation ---------- */
+        .reveal{opacity:0;transform:translateY(22px);transition:opacity .6s ease, transform .6s ease}
+        .reveal.in{opacity:1;transform:translateY(0)}
 
-        /* iframe responsive wrapper */
-        .embed-wrap{width:100%;background:rgba(0,0,0,0.4);border-radius:14px;border:1px solid rgba(255,255,255,0.04);padding:10px}
-        .responsive-iframe{position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:12px}
-        .responsive-iframe iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0;border-radius:12px}
+        /* ---------- Live page layout ---------- */
+        .live-grid{display:grid;grid-template-columns:1.7fr 1fr;gap:16px;align-items:start}
+        @media (max-width:980px){ .live-grid{grid-template-columns:1fr} }
 
-        .about-card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:18px;border-radius:14px;border:1px solid rgba(255,255,255,0.03)}
-        .about-card p{color:#cbd5e1;line-height:1.5;font-size:14px;word-break:break-word}
+        .video-wrap{border-radius:16px;overflow:hidden;border:1px solid var(--border);background:#000}
+        .responsive-iframe{position:relative;padding-bottom:56.25%;height:0}
+        .responsive-iframe iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0}
 
-        .chat-input-row{display:flex;gap:8px;margin-top:12px}
-        .chat-input-row input{flex:1;min-width:0}
-        .chat-input-row button{flex-shrink:0}
+        .stream-meta{padding:16px}
+        .stream-meta h1{font-size:22px;font-weight:900;margin-bottom:8px;word-break:break-word}
+        .counters{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+        .counter-chip{
+            background:var(--card-soft);border:1px solid var(--border);border-radius:12px;padding:10px 14px;min-width:110px;
+        }
+        .counter-chip .num{font-family:var(--font-mono);font-weight:800;font-size:20px;color:var(--green)}
+        .counter-chip .lbl{font-size:11px;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:0.4px}
 
-        .not-found{max-width:520px;margin:40px auto;text-align:center}
+        .desc-box p{color:#d4d4d8;line-height:1.6;font-size:14.5px;word-break:break-word}
+        .legal-box{margin-top:14px;padding:12px;background:rgba(255,77,77,0.06);border:1px solid rgba(255,77,77,0.18);border-radius:12px;color:#fca5a5;font-size:12.5px;line-height:1.5}
 
-        /* Footer animations & cyberpunk text */
+        /* ---------- Chat panel ---------- */
+        .chat-panel{display:flex;flex-direction:column;height:640px;max-height:80vh}
+        @media (max-width:980px){ .chat-panel{height:520px;max-height:none} }
+        .chat-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border)}
+        .chat-head h3{font-size:14.5px;font-weight:800}
+        .chat-body{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
+        .chat-msg{display:flex;gap:8px;align-items:flex-start;animation:msgIn .25s ease}
+        @keyframes msgIn{from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)}}
+        .chat-avatar{width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;border:1px solid var(--border)}
+        .chat-avatar.broadcaster{border-color:var(--green);box-shadow:0 0 8px var(--green-glow)}
+        .chat-msg .body{min-width:0;flex:1}
+        .chat-msg .row{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+        .chat-msg .who{font-weight:800;font-size:12.5px;color:var(--green)}
+        .chat-msg .who.normal{color:#e4e4e7}
+        .badge-owner{font-family:var(--font-mono);font-size:9.5px;font-weight:800;background:var(--green);color:#000;padding:1px 6px;border-radius:5px;letter-spacing:0.3px}
+        .chat-msg .time{font-size:10px;color:var(--muted)}
+        .chat-msg .text{font-size:13.5px;color:#f4f4f5;margin-top:2px;word-break:break-word;line-height:1.4}
+        .chat-msg .del{background:transparent;border:none;color:#71717a;font-size:11px;flex-shrink:0}
+        .chat-msg .del:hover{color:var(--danger)}
+
+        .chat-empty{color:var(--muted);text-align:center;margin-top:auto;margin-bottom:auto;font-size:13px}
+
+        .chat-footer{border-top:1px solid var(--border);padding:12px}
+        .join-form{display:flex;flex-direction:column;gap:10px}
+        .join-form input{padding:11px 12px;border-radius:10px;border:1px solid var(--border);background:#0d0d0d;color:#fff;font-size:14px}
+        .join-form input:focus{outline:2px solid var(--green);outline-offset:1px}
+        .honeypot{position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;opacity:0}
+
+        .send-row{display:flex;gap:8px}
+        .send-row input{flex:1;min-width:0;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:#0d0d0d;color:#fff;font-size:13.5px}
+        .send-row input:focus{outline:2px solid var(--green);outline-offset:1px}
+
+        .btn{
+            background:var(--green);color:#000;padding:11px 16px;border-radius:10px;border:none;font-weight:800;font-size:13.5px;
+            transition:transform .12s, opacity .15s, box-shadow .15s;box-shadow:0 4px 16px var(--green-glow);flex-shrink:0
+        }
+        .btn:hover:not(:disabled){box-shadow:0 6px 22px var(--green-glow)}
+        .btn:active:not(:disabled){transform:scale(0.97)}
+        .btn:disabled{opacity:0.4;cursor:not-allowed;box-shadow:none}
+        .btn-outline{background:transparent;color:var(--muted);border:1px solid var(--border);padding:9px 14px;border-radius:10px;font-weight:700;font-size:12.5px}
+        .btn-outline:hover{color:#fff;border-color:var(--green)}
+
+        .cooldown-bar{height:3px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden;margin-top:8px}
+        .cooldown-fill{height:100%;background:var(--green);transition:width .1s linear}
+
+        .userline{display:flex;align-items:center;gap:8px;justify-content:space-between;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-bottom:8px}
+        .userline b{color:var(--green)}
+
+        /* ---------- grid / about ---------- */
+        .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-top:16px}
+
+        .video-card{background:var(--card-soft);border:1px solid var(--border);border-radius:14px;padding:12px;transition:transform .2s, border-color .2s}
+        .video-card:hover{transform:translateY(-3px);border-color:var(--green)}
+        .video-thumb{height:130px;border-radius:10px;background:linear-gradient(160deg,#111,#000);display:flex;align-items:center;justify-content:center;color:var(--green);font-weight:900;font-family:var(--font-mono)}
+
+        .not-found{max-width:520px;margin:60px auto;text-align:center}
+
+        .profile-card{max-width:480px;margin:20px auto;text-align:center}
+        .profile-card .row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:13.5px;text-align:left}
+        .profile-card .row b{color:var(--green)}
+
+        /* ---------- footer ---------- */
         footer.site-footer{
-            position:fixed;
-            left:0;right:0;bottom:0;
-            transform:translateY(100%);
-            opacity:0;
-            transition:transform .5s cubic-bezier(.2,.9,.3,1),opacity .35s;
-            z-index:60;
-            pointer-events:none;
-            padding-bottom:env(safe-area-inset-bottom,0);
-            will-change:transform,opacity;
+            position:fixed;left:0;right:0;bottom:0;transform:translateY(100%);opacity:0;
+            transition:transform .5s cubic-bezier(.2,.9,.3,1),opacity .35s;z-index:60;pointer-events:none;
+            padding-bottom:env(safe-area-inset-bottom,0);will-change:transform,opacity;
         }
-        footer.site-footer.visible{
-            transform:translateY(0);
-            opacity:1;
-            pointer-events:auto;
-        }
+        footer.site-footer.visible{transform:translateY(0);opacity:1;pointer-events:auto}
         footer .footer-inner{
-            display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 24px;background:linear-gradient(90deg, rgba(0,0,0,0.6), rgba(5,5,10,0.55));backdrop-filter: blur(8px);border-top:1px solid rgba(255,255,255,0.03);flex-wrap:wrap
+            display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 22px;
+            background:rgba(0,0,0,0.85);backdrop-filter:blur(10px);border-top:1px solid var(--border);flex-wrap:wrap
         }
-        .marquee-left{display:flex;align-items:center;gap:12px;min-width:0}
-        .marquee-left img{width:56px;height:56px;border-radius:8px;object-fit:cover;flex-shrink:0}
-        .marquee-left > div{min-width:0}
-        .marquee-left > div > div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .footer-left{display:flex;align-items:center;gap:10px;min-width:0}
+        .footer-left img{width:38px;height:38px;border-radius:8px;object-fit:cover;flex-shrink:0}
+        .footer-left .t1{font-weight:900;color:#fff;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .footer-left .t2{color:var(--muted);font-size:11px}
         .cyber-text{
-            font-weight:900;
-            font-size:16px;
-            letter-spacing:1px;
-            padding:6px 12px;border-radius:8px;
-            background:linear-gradient(90deg,var(--neon-green),var(--neon-white),#7fffcb);
-            -webkit-background-clip:text;
-            background-clip:text;
-            color:transparent;
-            text-shadow:0 0 8px rgba(0,255,122,0.12);
-            animation:cyberShift 3s linear infinite;
-            display:inline-block;
+            font-family:var(--font-mono);font-weight:800;font-size:13px;letter-spacing:0.6px;color:var(--green);
+            text-shadow:0 0 10px var(--green-glow);
         }
-        @keyframes cyberShift{
-            0%{filter:drop-shadow(0 0 6px rgba(0,255,122,0.08))}
-            50%{filter:drop-shadow(0 0 18px rgba(0,255,122,0.18))}
-            100%{filter:drop-shadow(0 0 6px rgba(0,255,122,0.08))}
-        }
-        .footer-right small{color:#94a3b8;display:block}
-        .footer-right .title{font-weight:800;color:#e6eefc}
 
-        /* small responsive tweaks */
+        /* ---------- floating action ---------- */
+        .fab{
+            position:fixed;right:18px;bottom:18px;z-index:70;width:54px;height:54px;border-radius:50%;
+            background:var(--green);color:#000;display:flex;align-items:center;justify-content:center;font-size:22px;
+            box-shadow:0 8px 24px var(--green-glow);border:none;animation:fabFloat 2.6s ease-in-out infinite;
+        }
+        @keyframes fabFloat{0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)}}
+
         @media (max-width:720px){
-            .hero h1{font-size:26px}
-            .hero p.lead{font-size:15px}
-            .hero-right{width:100%;align-items:stretch;text-align:left}
-            .hero-right .glass-card{text-align:left !important}
-            .footer-inner{flex-direction:column;align-items:flex-start;gap:8px;padding:14px 16px}
-            main{padding:20px 14px 160px}
-            nav{width:100%;justify-content:flex-start}
+            .stream-meta h1{font-size:19px}
+            main{padding:18px 12px 100px}
+            .footer-inner{padding:12px 14px}
         }
-
         @media (max-width:480px){
-            .hero h1{font-size:22px}
-            .stat{font-size:12px;padding:6px 10px}
-            header.glass-card{padding:12px}
-            .glass-card{padding:12px;border-radius:14px}
-            .btn-primary{padding:9px 12px;font-size:14px}
-        }
-
-        /* extra accent text style (green/white/black switching) */
-        .accent-line{
-            display:inline-block;
-            padding:6px 10px;border-radius:8px;font-weight:800;
-            background:linear-gradient(90deg, #00ff7a 0%, #ffffff 50%, #000000 100%);
-            background-size:200% 100%;
-            -webkit-background-clip:text;background-clip:text;color:transparent;
-            animation:accentMove 4s linear infinite;
-        }
-        @keyframes accentMove{
-            0%{background-position:0% 0}
-            100%{background-position:200% 0}
+            header.topbar{padding:10px 12px}
+            .brand .name{font-size:15px}
+            .glass{border-radius:14px}
         }
 
         @media (prefers-reduced-motion: reduce){
@@ -189,6 +236,29 @@
 <body>
     <div id="root"></div>
 
+    <!--
+      ÖNERİLEN FIREBASE REALTIME DATABASE KURALLARI (Firebase Console > Realtime Database > Rules)
+      İstemci tarafı JS tek başına DDoS/kötüye kullanımı gerçekten engelleyemez; asıl bariyer
+      sunucu tarafında (Firebase Rules + gerekirse App Check / Cloudflare) kurulmalıdır:
+
+      {
+        "rules": {
+          "chat_messages": {
+            ".read": true,
+            ".indexOn": ["timestamp"],
+            "$messageId": {
+              ".write": "!data.exists()",
+              ".validate": "newData.hasChildren(['name','text','timestamp']) && newData.child('text').val().length <= 500 && newData.child('name').val().length <= 60"
+            }
+          },
+          "chat_users": {
+            ".read": false,
+            ".write": "newData.hasChildren(['email','firstSeen'])"
+          }
+        }
+      }
+    -->
+
     <script type="text/babel">
         const { useState, useEffect, useRef, useCallback } = React;
         const { createRoot } = ReactDOM;
@@ -197,17 +267,14 @@
             channelName: "Emcük YTB",
             channelHandle: "@EmcükYTB",
             adminEmail: "tvemcuk@gmail.com",
-            ownerName: "Hakan",
-            age: 38,
             device: "Samsung Galaxy Tab S9 Ultra + Scorpion 2 Pro Klavye Mouse",
             fps: "119.5",
-            slogan: "SAYGIDA MECBUR SEVGİDE ÖZGÜRSÜNÜZ 💝",
-            subscribers: "37,3 B",
-            totalVideos: "1.219",
-            profileImage: "https://st5.depositphotos.com/1915171/64694/v/450/depositphotos_646948286-stock-illustration-user-profile-icon-avatar-person.jpg",
-            fallbackImage: "data:image/svg+xml;utf8," + encodeURIComponent(
-                '<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120"><rect width="100%" height="100%" fill="#1e1b2e"/><text x="50%" y="55%" font-size="42" text-anchor="middle" fill="#a78bfa" font-family="sans-serif">E</text></svg>'
-            )
+            slogan: "SAYGIDA MECBUR SEVGİDE ÖZGÜRSÜNÜZ 💚",
+            subscribersNum: 37300,
+            totalVideosNum: 1219,
+            logo: "https://emcukytb.com.tr/ytlogo.png",
+            fallbackLogo: "data:image/svg+xml;utf8," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120"><rect width="100%" height="100%" fill="#0a0a0a"/><text x="50%" y="58%" font-size="46" text-anchor="middle" fill="#00ff85" font-family="sans-serif">E</text></svg>'),
+            defaultAvatar: "https://st5.depositphotos.com/1915171/64694/v/450/depositphotos_646948286-stock-illustration-user-profile-icon-avatar-person.jpg"
         };
 
         const firebaseConfig = {
@@ -220,7 +287,6 @@
           appId: "1:583409310450:web:b14cf43e280ba87f9c8e6b"
         };
 
-        // Firebase'i güvenli şekilde başlat (hot-reload / çift init hatasını önler)
         let db = null;
         try {
             const app = firebase.apps && firebase.apps.length ? firebase.app() : firebase.initializeApp(firebaseConfig);
@@ -229,22 +295,17 @@
             console.error("Firebase başlatma hatası:", err);
         }
 
-        const VALID_PATHS = ['/kanal', '/hakkinda', '/chat', '/u/0/stream-yt', '/w/9/videolar-hepsi', '/profil'];
-        const KEY_TTL_MS = 10 * 60 * 1000; // 21 haneli anahtarın geçerlilik süresi: 10 dakika
+        const VALID_PATHS = ['/canli', '/hakkinda', '/videolar', '/profil'];
         const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-        function generate21DigitKey() {
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-            let result = '';
-            for (let i = 0; i < 21; i++) {
-                result += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-            return result;
-        }
+        const MESSAGE_COOLDOWN_MS = 4000;   // spam/DDoS bariyeri: mesajlar arası minimum süre
+        const MAX_MESSAGE_LEN = 500;
+        // Gizli yayıncı kodu: sohbet kutusuna yazılıp gönderilirse mesaj olarak GÖNDERİLMEZ,
+        // sadece o an yazan kişide yayıncı modunu açar/kapatır. Başka hiç kimse bu kodu göremez.
+        const BROADCASTER_CODE = "QAG46476AGaG646ouafph9749856oauhfuağAHFAJHFAAJIFJak+645494549647464447";
 
         function scanMessageForBots(text) {
             if (!text || typeof text !== 'string') return false;
-            const spamKeywords = ['bedava uc', 'hile', 'hack', 'kazandınız', 'tıkla', 'free uc', 'nitro'];
+            const spamKeywords = ['bedava uc', 'hile', 'hack', 'kazandınız', 'tıkla', 'free uc', 'nitro', 'http://', 'https://', 'www.'];
             const lowerText = text.toLowerCase();
             for (let word of spamKeywords) {
                 if (lowerText.includes(word)) return false;
@@ -253,75 +314,114 @@
         }
 
         async function fetchLiveYouTubeData() {
-            // NOT: Gerçek canlı veri için YouTube Data API entegrasyonu gerekir.
-            // Şimdilik güvenli varsayılan (mock) veri döndürülüyor.
+            // NOT: Gerçek zamanlı YouTube verisi için YouTube Data API v3 (sunucu taraflı anahtarla)
+            // gerekir. API anahtarını tarayıcıya koymak kota istismarına açık kapı bırakır, bu yüzden
+            // burada güvenli bir örnek/varsayılan veri kullanılıyor.
             try {
-                return {
-                    isLive: true,
-                    viewers: "1,540",
-                    title: "Hakan İle Canlı WOW Keyfi - VİCTOR REİS DERLER 😇",
-                    subscribers: channelData.subscribers,
-                    totalVideos: channelData.totalVideos
-                };
+                return { isLive: true, viewers: 1540, title: "Hakan İle Canlı WOW Keyfi - VİCTOR REİS DERLER 😇" };
             } catch (err) {
                 console.error("YouTube verisi alınamadı:", err);
-                return null;
+                return { isLive: false, viewers: 0, title: "" };
             }
         }
 
-        // --- SPA Yönlendirme: Hash tabanlı router ---
-        // GitHub Pages gibi statik sunucularda alt yollarda F5/doğrudan erişimde 404 oluşmasını
-        // tamamen engeller çünkü sunucu her zaman sadece kök index.html'i döndürür; '#' sonrası
-        // kısım tarayıcıda kalır ve sunucuya hiç gitmez. history (geri/ileri) davranışı korunur.
         function getCurrentHashPath() {
             const h = window.location.hash;
-            if (!h || h === '#' || h === '#/') return '/kanal';
+            if (!h || h === '#' || h === '#/') return '/canli';
             return h.slice(1);
         }
 
-        function NotFound({ onHome }) {
+        // ---------- Sayaç animasyonu (0 -> hedef) ----------
+        function useCountUp(target, duration = 1100) {
+            const [value, setValue] = useState(0);
+            useEffect(() => {
+                let raf;
+                const start = performance.now();
+                const from = 0;
+                const tick = (now) => {
+                    const p = Math.min(1, (now - start) / duration);
+                    const eased = 1 - Math.pow(1 - p, 3);
+                    setValue(Math.round(from + (target - from) * eased));
+                    if (p < 1) raf = requestAnimationFrame(tick);
+                };
+                raf = requestAnimationFrame(tick);
+                return () => raf && cancelAnimationFrame(raf);
+            }, [target]);
+            return value;
+        }
+
+        // ---------- Scroll ile beliren (reveal) kapsayıcı ----------
+        function Reveal({ children, className = "", delay = 0 }) {
+            const ref = useRef(null);
+            const [inView, setInView] = useState(false);
+            useEffect(() => {
+                const el = ref.current;
+                if (!el) return;
+                const obs = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => { if (entry.isIntersecting) { setInView(true); obs.disconnect(); } });
+                }, { threshold: 0.15 });
+                obs.observe(el);
+                return () => obs.disconnect();
+            }, []);
             return (
-                <div className="glass-card not-found">
-                    <h2 style={{color:'#fb7185'}}>404 - Sayfa Bulunamadı</h2>
-                    <p style={{color:'#94a3b8', marginTop:8}}>Aradığınız sayfa mevcut değil kankam.</p>
-                    <button className="btn-primary" style={{marginTop:14}} onClick={onHome}>Ana Sayfaya Dön</button>
+                <div ref={ref} className={`reveal ${inView ? 'in' : ''} ${className}`} style={{ transitionDelay: `${delay}ms` }}>
+                    {children}
                 </div>
             );
         }
 
-        function App(){
+        function NotFound({ onHome }) {
+            return (
+                <Reveal>
+                    <div className="glass not-found" style={{ padding: 24 }}>
+                        <h2 style={{ color: 'var(--danger)' }}>404 — Sayfa Bulunamadı</h2>
+                        <p style={{ color: 'var(--muted)', marginTop: 8 }}>Aradığınız sayfa mevcut değil kankam.</p>
+                        <button className="btn" style={{ marginTop: 16 }} onClick={onHome}>Canlı Yayına Dön</button>
+                    </div>
+                </Reveal>
+            );
+        }
+
+        function App() {
             const [path, setPath] = useState(getCurrentHashPath());
             const [user, setUser] = useState(null);
             const [emailInput, setEmailInput] = useState("");
-            const [keyInput, setKeyInput] = useState("");
-            const [step, setStep] = useState(1);
+            const [honeypot, setHoneypot] = useState("");
+            const [joining, setJoining] = useState(false);
+
             const [messages, setMessages] = useState([]);
             const [newMessage, setNewMessage] = useState("");
-            const [ytData, setYtData] = useState(null);
-            const [captchaVerified, setCaptchaVerified] = useState(false);
-            const [footerVisible, setFooterVisible] = useState(false);
-            const [requestingKey, setRequestingKey] = useState(false);
-            const [verifyingKey, setVerifyingKey] = useState(false);
+            const [sendHoneypot, setSendHoneypot] = useState("");
             const [sendingMsg, setSendingMsg] = useState(false);
+            const [cooldownPct, setCooldownPct] = useState(0);
+
+            const [isBroadcaster, setIsBroadcaster] = useState(false);
+            const [ytData, setYtData] = useState(null);
+            const [footerVisible, setFooterVisible] = useState(false);
 
             const chatScrollRef = useRef(null);
             const tickingRef = useRef(false);
+            const lastSendRef = useRef(0);
+            const cooldownTimerRef = useRef(null);
 
-            // İlk yüklemede hash yoksa URL'yi netleştir (yeni geçmiş kaydı eklemeden)
+            const subsCount = useCountUp(channelData.subscribersNum);
+            const videosCount = useCountUp(channelData.totalVideosNum);
+            const liveViewersCount = useCountUp(ytData && ytData.isLive ? ytData.viewers : 0);
+
+            // İlk yüklemede hash yoksa netleştir
             useEffect(() => {
                 if (!window.location.hash) {
-                    window.history.replaceState(null, '', window.location.pathname + window.location.search + '#/kanal');
+                    window.history.replaceState(null, '', window.location.pathname + window.location.search + '#/canli');
                 }
             }, []);
 
-            // Hash değişikliklerini dinle (geri/ileri tuşları dahil)
             useEffect(() => {
                 const onHashChange = () => setPath(getCurrentHashPath());
                 window.addEventListener('hashchange', onHashChange);
                 return () => window.removeEventListener('hashchange', onHashChange);
             }, []);
 
-            // Kullanıcı oturumunu localStorage'dan güvenli şekilde yükle
+            // Oturumu güvenli şekilde yükle
             useEffect(() => {
                 try {
                     const saved = localStorage.getItem('emcuk_user');
@@ -330,16 +430,15 @@
                         if (parsed && parsed.email) setUser(parsed);
                     }
                 } catch (err) {
-                    console.warn("Kayıtlı oturum okunamadı, temizleniyor:", err);
+                    console.warn("Kayıtlı oturum okunamadı:", err);
                     try { localStorage.removeItem('emcuk_user'); } catch (e) {}
                 }
-
                 let mounted = true;
                 fetchLiveYouTubeData().then(d => { if (mounted) setYtData(d); });
                 return () => { mounted = false; };
             }, []);
 
-            // Realtime chat mesajları: mükerrer kayıt önleme + limit + silme senkronizasyonu
+            // Realtime sohbet: mükerrer engelleme + silme senkronu + limit
             useEffect(() => {
                 if (!db) return;
                 const msgRef = db.ref('chat_messages').orderByChild('timestamp').limitToLast(200);
@@ -356,13 +455,13 @@
                             name: val.name || 'Anonim',
                             email: val.email || '',
                             text: val.text || '',
+                            role: val.role || 'user',
                             timestamp: val.timestamp || Date.now()
                         }];
                         next.sort((a, b) => a.timestamp - b.timestamp);
                         return next;
                     });
                 };
-
                 const handleRemove = snap => {
                     if (!snap) return;
                     seenIds.delete(snap.key);
@@ -371,27 +470,23 @@
 
                 msgRef.on('child_added', handleAdd);
                 msgRef.on('child_removed', handleRemove);
-
                 return () => {
                     msgRef.off('child_added', handleAdd);
                     msgRef.off('child_removed', handleRemove);
                 };
             }, []);
 
-            // Yeni mesaj geldiğinde sohbeti otomatik en alta kaydır
             useEffect(() => {
-                if (chatScrollRef.current) {
-                    chatScrollRef.current.scrollTop = chatScrollRef.current.scrollHeight;
-                }
+                if (chatScrollRef.current) chatScrollRef.current.scrollTop = chatScrollRef.current.scrollHeight;
             }, [messages]);
 
-            // Scroll -> footer görünürlüğü (throttled, performanslı)
+            // Footer scroll görünürlüğü (throttled)
             useEffect(() => {
                 const onScroll = () => {
                     if (tickingRef.current) return;
                     tickingRef.current = true;
                     window.requestAnimationFrame(() => {
-                        const nearBottom = (window.innerHeight + window.scrollY) >= (document.body.offsetHeight - 180);
+                        const nearBottom = (window.innerHeight + window.scrollY) >= (document.body.offsetHeight - 160);
                         setFooterVisible(nearBottom);
                         tickingRef.current = false;
                     });
@@ -401,90 +496,91 @@
                 return () => window.removeEventListener('scroll', onScroll);
             }, []);
 
+            // Kozmetik "cracke karşı" önlemler — GERÇEK GÜVENLİK DEĞİLDİR, sadece caydırıcıdır.
+            // Not: Tarayıcı JS'i asla tam gizlenemez; kaynak kodu her zaman görüntülenebilir.
+            useEffect(() => {
+                const blockContext = (e) => e.preventDefault();
+                const blockKeys = (e) => {
+                    const k = e.key;
+                    if (k === 'F12') { e.preventDefault(); return; }
+                    if (e.ctrlKey && e.shiftKey && (k === 'I' || k === 'J' || k === 'C')) { e.preventDefault(); return; }
+                    if (e.ctrlKey && k === 'U') { e.preventDefault(); return; }
+                };
+                document.addEventListener('contextmenu', blockContext);
+                document.addEventListener('keydown', blockKeys);
+                return () => {
+                    document.removeEventListener('contextmenu', blockContext);
+                    document.removeEventListener('keydown', blockKeys);
+                };
+            }, []);
+
+            // Gönder butonu bekleme (cooldown) çubuğu
+            useEffect(() => {
+                if (cooldownTimerRef.current) clearInterval(cooldownTimerRef.current);
+                cooldownTimerRef.current = setInterval(() => {
+                    const elapsed = Date.now() - lastSendRef.current;
+                    const pct = Math.max(0, Math.min(100, (elapsed / MESSAGE_COOLDOWN_MS) * 100));
+                    setCooldownPct(pct);
+                }, 100);
+                return () => clearInterval(cooldownTimerRef.current);
+            }, []);
+
             const navigate = useCallback((url) => {
                 if (window.location.hash.slice(1) === url) return;
                 window.location.hash = url;
                 window.scrollTo(0, 0);
             }, []);
 
-            const handleRequestKey = async (e) => {
+            const handleJoin = async (e) => {
                 e.preventDefault();
-                if (!db) { alert("⚠️ Veritabanı bağlantısı kurulamadı, lütfen sayfayı yenileyin."); return; }
-                if (!captchaVerified) { alert("⚠️ Lütfen reCAPTCHA (Robot Değilim) doğrulamasını tamamlayın!"); return; }
-                const trimmedEmail = emailInput.trim();
-                if (!trimmedEmail || !EMAIL_REGEX.test(trimmedEmail)) { alert("⚠️ Lütfen geçerli bir e-posta adresi girin."); return; }
-                if (requestingKey) return;
-
-                setRequestingKey(true);
+                if (honeypot) return; // bot tuzağı tetiklendi, sessizce durdur
+                const trimmed = emailInput.trim();
+                if (!trimmed || !EMAIL_REGEX.test(trimmed)) { alert("⚠️ Lütfen geçerli bir e-posta adresi girin."); return; }
+                if (joining) return;
+                setJoining(true);
                 try {
-                    const generatedKey = generate21DigitKey();
-                    const safe = trimmedEmail.replace(/[.#$\/\[\]]/g, '_');
-                    await db.ref(`auth_keys/${safe}`).set({ key: generatedKey, time: Date.now(), email: trimmedEmail });
-                    alert(`[Güvenlik] ${trimmedEmail} adresine 21 haneli anahtar üretildi (10 dakika geçerli)!\n\nTest Anahtarınız: ${generatedKey}`);
-                    setStep(2);
-                } catch (err) {
-                    console.error("Anahtar üretme hatası:", err);
-                    alert("❌ Anahtar üretilirken bir hata oluştu. Lütfen tekrar deneyin.");
-                } finally {
-                    setRequestingKey(false);
-                }
-            };
-
-            const handleVerifyKey = async (e) => {
-                e.preventDefault();
-                if (!db) { alert("⚠️ Veritabanı bağlantısı kurulamadı, lütfen sayfayı yenileyin."); return; }
-                const trimmedKey = keyInput.trim();
-                if (!trimmedKey) return;
-                if (verifyingKey) return;
-
-                setVerifyingKey(true);
-                try {
-                    const safe = emailInput.trim().replace(/[.#$\/\[\]]/g, '_');
-                    const snap = await db.ref(`auth_keys/${safe}`).once('value');
-                    const data = snap.exists() ? snap.val() : null;
-
-                    if (!data || data.key !== trimmedKey) {
-                        alert("❌ Hatalı 21 haneli anahtar!");
-                        return;
-                    }
-                    const age = Date.now() - (data.time || 0);
-                    if (age > KEY_TTL_MS) {
-                        alert("⏰ Anahtarın süresi dolmuş. Lütfen yeni bir anahtar isteyin.");
-                        setStep(1);
-                        setKeyInput("");
-                        return;
-                    }
-
-                    const userData = { email: emailInput.trim(), name: emailInput.split('@')[0], joined: new Date().toLocaleDateString('tr-TR') };
+                    const userData = { email: trimmed, name: trimmed.split('@')[0], joined: new Date().toLocaleDateString('tr-TR') };
                     setUser(userData);
-                    try { localStorage.setItem('emcuk_user', JSON.stringify(userData)); } catch (err) { console.warn("Oturum kaydedilemedi:", err); }
-
-                    // Tek kullanımlık anahtarı temizle
-                    db.ref(`auth_keys/${safe}`).remove().catch(() => {});
-
-                    alert("Giriş başarılı! Hoş geldin kankam 💘");
-                    navigate('/profil');
-                } catch (err) {
-                    console.error("Doğrulama hatası:", err);
-                    alert("❌ Doğrulama sırasında bir hata oluştu. Lütfen tekrar deneyin.");
+                    try { localStorage.setItem('emcuk_user', JSON.stringify(userData)); } catch (err) {}
+                    if (db) {
+                        const safe = trimmed.replace(/[.#$\/\[\]]/g, '_');
+                        db.ref(`chat_users/${safe}`).update({ email: trimmed, lastSeen: Date.now() }).catch(() => {});
+                        db.ref(`chat_users/${safe}/firstSeen`).transaction(v => v || Date.now()).catch(() => {});
+                    }
                 } finally {
-                    setVerifyingKey(false);
+                    setJoining(false);
                 }
             };
 
             const handleLogout = () => {
                 setUser(null);
+                setIsBroadcaster(false);
                 try { localStorage.removeItem('emcuk_user'); } catch (err) {}
-                setStep(1); setEmailInput(''); setKeyInput(''); setCaptchaVerified(false);
-                navigate('/chat');
+                setEmailInput('');
+                navigate('/canli');
             };
 
             const sendMessage = async (e) => {
                 e.preventDefault();
+                if (sendHoneypot) return; // bot tuzağı
                 if (!db) { alert("⚠️ Veritabanı bağlantısı kurulamadı."); return; }
                 const trimmed = newMessage.trim();
                 if (!trimmed || !user || sendingMsg) return;
-                if (trimmed.length > 500) { alert("✋ Mesaj çok uzun (maksimum 500 karakter)."); return; }
+
+                // Gizli yayıncı kodu kontrolü — asla veritabanına gönderilmez, kimse göremez
+                if (trimmed === BROADCASTER_CODE) {
+                    setIsBroadcaster(prev => !prev);
+                    setNewMessage('');
+                    alert(isBroadcaster ? "Yayıncı modu kapatıldı." : "🔴 Yayıncı modu etkinleştirildi (sadece sende görünür).");
+                    return;
+                }
+
+                // DDoS/spam bariyeri: minimum gönderim aralığı
+                const now = Date.now();
+                if (now - lastSendRef.current < MESSAGE_COOLDOWN_MS) {
+                    return;
+                }
+                if (trimmed.length > MAX_MESSAGE_LEN) { alert("✋ Mesaj çok uzun (maksimum 500 karakter)."); return; }
                 if (!scanMessageForBots(trimmed)) { alert("🛡️ Bot Tarama Sistemi: Mesajınız güvenlik filtresine takıldı!"); return; }
 
                 setSendingMsg(true);
@@ -493,8 +589,10 @@
                         name: user.name || 'Anonim',
                         email: user.email || '',
                         text: trimmed,
+                        role: isBroadcaster ? 'broadcaster' : 'user',
                         timestamp: (firebase.database.ServerValue && firebase.database.ServerValue.TIMESTAMP) || Date.now()
                     });
+                    lastSendRef.current = Date.now();
                     setNewMessage('');
                 } catch (err) {
                     console.error("Mesaj gönderme hatası:", err);
@@ -505,285 +603,225 @@
             };
 
             const deleteMsg = async (id) => {
-                if (!db) return;
-                if (user?.email !== channelData.adminEmail) { alert("Bu işlem için yetkiniz yok!"); return; }
-                try {
-                    await db.ref(`chat_messages/${id}`).remove();
-                } catch (err) {
-                    console.error("Mesaj silinemedi:", err);
-                    alert("❌ Mesaj silinirken bir hata oluştu.");
-                }
+                if (!db || !isBroadcaster) return;
+                try { await db.ref(`chat_messages/${id}`).remove(); } catch (err) { console.error(err); }
             };
 
-            const isKnownPath = path === '/' || VALID_PATHS.includes(path);
+            const isKnownPath = VALID_PATHS.includes(path);
+            const cooldownActive = cooldownPct < 100;
 
             return (
-                <div className="min-h-screen flex flex-col">
-                    <header className="glass-card m-4 p-4">
-                        <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:12,flexWrap:'wrap'}}>
-                            <div style={{display:'flex',alignItems:'center',gap:12}}>
-                                <div className="logo-row" onClick={()=>navigate('/kanal')}>
-                                    <img src={channelData.profileImage} alt="logo" onError={(e)=>{ e.target.onerror=null; e.target.src = channelData.fallbackImage; }} />
-                                </div>
-                                <div>
-                                    <div style={{fontWeight:900,fontSize:18}}>Emcük YTB</div>
-                                    <div style={{fontSize:11,color:'#f472b6',fontWeight:700}}>VİCTOR REİS DERLER 😇</div>
-                                </div>
+                <div>
+                    <header className="topbar">
+                        <div className="brand" onClick={() => navigate('/canli')}>
+                            <img src={channelData.logo} alt="logo" onError={(e) => { e.target.onerror = null; e.target.src = channelData.fallbackLogo; }} />
+                            <div>
+                                <div className="name">{channelData.channelName}</div>
+                                <div className="tag">{channelData.channelHandle}</div>
                             </div>
-
-                            <nav>
-                                <button onClick={() => navigate('/kanal')} className={path === '/kanal' || path === '/' ? 'active':''}>Ana Sayfa</button>
-                                <button onClick={() => navigate('/hakkinda')} className={path === '/hakkinda' ? 'active':''}>Hakkında</button>
-                                <button onClick={() => navigate('/chat')} className={path === '/chat' ? 'active':''}>Canlı Chat</button>
-                                <button onClick={() => navigate('/u/0/stream-yt')} className={path === '/u/0/stream-yt' ? 'active':''}>Canlı Yayınlar</button>
-                                <button onClick={() => navigate('/w/9/videolar-hepsi')} className={path === '/w/9/videolar-hepsi' ? 'active':''}>Tüm Videolar</button>
-                                <button onClick={() => navigate('/profil')} className={path === '/profil' ? 'active':''}>Profil</button>
-                            </nav>
                         </div>
+                        <nav className="pillnav">
+                            <button onClick={() => navigate('/canli')} className={path === '/canli' ? 'active' : ''}>🔴 Canlı Yayın</button>
+                            <button onClick={() => navigate('/hakkinda')} className={path === '/hakkinda' ? 'active' : ''}>Hakkında</button>
+                            <button onClick={() => navigate('/videolar')} className={path === '/videolar' ? 'active' : ''}>Videolar</button>
+                            <button onClick={() => navigate('/profil')} className={path === '/profil' ? 'active' : ''}>Profil</button>
+                        </nav>
                     </header>
 
+                    <div className="marquee-wrap">
+                        <div className="marquee-track">
+                            <span>🟢 CANLI YAYIN AKTİF</span>
+                            <span>👥 {channelData.subscribersNum.toLocaleString('tr-TR')} ABONE</span>
+                            <span>🎬 {channelData.totalVideosNum.toLocaleString('tr-TR')} VİDEO</span>
+                            <span>🕗 HER AKŞAM 20:00'DE CANLI</span>
+                            <span>💚 ABONE OLSANA KANKAM</span>
+                            <span>🟢 CANLI YAYIN AKTİF</span>
+                            <span>👥 {channelData.subscribersNum.toLocaleString('tr-TR')} ABONE</span>
+                            <span>🎬 {channelData.totalVideosNum.toLocaleString('tr-TR')} VİDEO</span>
+                            <span>🕗 HER AKŞAM 20:00'DE CANLI</span>
+                            <span>💚 ABONE OLSANA KANKAM</span>
+                        </div>
+                    </div>
+
                     <main>
-                        {!isKnownPath && <NotFound onHome={() => navigate('/kanal')} />}
+                        {!isKnownPath && <NotFound onHome={() => navigate('/canli')} />}
 
-                        {(path === '/' || path === '/kanal') && (
-                            <>
-                                <div className="hero">
-                                    <div className="hero-left">
-                                        <h1>VİCTOR REİS DERLER 😇</h1>
-                                        <p className="lead">Ne Bakıyon 🥰 <span className="accent-line">ABONE OLSANA KANKAM 💘💘</span></p>
-                                        <div className="stats" style={{marginTop:8}}>
-                                            <div className="stat">👥 {ytData ? ytData.subscribers : channelData.subscribers} Abone</div>
-                                            <div className="stat">🎬 {ytData ? ytData.totalVideos : channelData.totalVideos} Video</div>
-                                            <div className="stat">🔴 {ytData && ytData.isLive ? `Canlı İzleyici: ${ytData.viewers}` : "Her Akşam Canlı Yayın"}</div>
+                        {path === '/canli' && (
+                            <div className="live-grid">
+                                <Reveal>
+                                    <div className="video-wrap">
+                                        <div className="responsive-iframe">
+                                            <iframe src="https://www.youtube.com/embed/ANPQvjK7Rio" title="Emcük YTB Canlı Yayın" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
                                         </div>
-                                    </div>
-
-                                    <div className="hero-right">
-                                        <div className="glass-card" style={{textAlign:'right'}}>
-                                            <div style={{fontSize:12,color:'#a5b4fc',fontWeight:800}}>Canlı Yayın</div>
-                                            <div style={{fontSize:13}}>🔴 Emcük YTB Kanalında Aktif</div>
-                                            <a className="btn-primary" href="https://www.youtube.com/@Emc%C3%BCkYTB/streams" target="_blank" rel="noreferrer" style={{marginTop:8, display:'inline-block'}}>YouTube Kanalında İzle</a>
-                                        </div>
-
-                                        <div className="glass-card" style={{display:'flex',gap:10,alignItems:'center'}}>
-                                            <img src={channelData.profileImage} alt="profile" style={{width:56,height:56,borderRadius:8,objectFit:'cover',flexShrink:0}} onError={(e)=>{ e.target.onerror=null; e.target.src = channelData.fallbackImage; }} />
-                                            <div style={{textAlign:'left',minWidth:0}}>
-                                                <div style={{fontWeight:800,color:'#e6eefc'}}>{channelData.channelName}</div>
-                                                <div style={{fontSize:12,color:'#94a3b8',wordBreak:'break-word'}}>Reklam & İşbirliği: <a href={`mailto:${channelData.adminEmail}`} style={{color:'#fb7185',fontWeight:800}}>{channelData.adminEmail}</a></div>
+                                        <div className="stream-meta">
+                                            <div className="live-pill" style={{ marginBottom: 10 }}><span className="live-dot"></span> CANLI</div>
+                                            <h1>Hakan İle Canlı WOW Keyfi - VİCTOR REİS DERLER 😇</h1>
+                                            <div className="counters">
+                                                <div className="counter-chip"><div className="num">{subsCount.toLocaleString('tr-TR')}</div><div className="lbl">Abone</div></div>
+                                                <div className="counter-chip"><div className="num">{videosCount.toLocaleString('tr-TR')}</div><div className="lbl">Video</div></div>
+                                                <div className="counter-chip"><div className="num">{liveViewersCount.toLocaleString('tr-TR')}</div><div className="lbl">Canlı İzleyici</div></div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </Reveal>
 
-                                <div className="grid" style={{marginTop:18}}>
-                                    <div className="glass-card about-card">
-                                        <h3 style={{color:'#93c5fd',marginBottom:8}}>💖 Kankilerim Sayfamıza Hepiniz Hoşgeldiniz</h3>
-                                        <p>
-                                            Selamlar Kankilerim İsmim Hakan 38 Yaşındayım Her Akşam Canlı Yayında Sizlerle Birlikte WOW Oynuyoruz. Kanalımda Ki Videolarımın %60'ı Eski Akımlar Olup Şahsıma Ait Olmayanları Sabitlediğim Yorumda Belirttim. Video Sahibi Olan Arkadaşlarım Kanıtı Olduğu Takdirde Videoları Bana Ulaşarak Kaldırma Talebinde Bulunabilir 💘
-                                        </p>
-                                        <ul style={{marginTop:10,color:'#cbd5e1',lineHeight:1.6}}>
-                                            <li>🤝 <b>Katıl Aboneleri:</b> Oyundan Ekliyorum 👍</li>
-                                            <li>💻 <b>Kullandığım Cihaz:</b> {channelData.device}</li>
-                                            <li>⚡ <b>FPS:</b> {channelData.fps} 😇</li>
-                                            <li>📩 <b>Reklam ve İşbirliği İçin:</b> <a href={`mailto:${channelData.adminEmail}`} style={{color:'#fb7185',fontWeight:800}}>{channelData.adminEmail}</a></li>
-                                        </ul>
-                                        <div style={{marginTop:12,padding:12,background:'rgba(139,92,246,0.05)',borderRadius:10,border:'1px solid rgba(139,92,246,0.08)',color:'#fecaca',fontSize:13}}>
-                                            <b>YASAL UYARI:</b> Her Akşam Açtığım Canlı Yayınların Ekran Kaydını Almaktayım, Canlı Yayınımda Şahsıma Edilen KÜFÜR /ARGO Kelimelerin Gerekli Kaydını Alarak, Küfür Edenler Hakkında CUMHURİYET SAVCILIĞINA SUÇ DUYURUSUNDA Bulunduğumu Lütfen Unutmayin 👮 <br/>
-                                            <span style={{fontWeight:900,color:'#fb7185',display:'inline-block',marginTop:6}}>{channelData.slogan}</span>
-                                        </div>
-                                    </div>
-
-                                    <div className="glass-card embed-wrap">
-                                        <h4 style={{color:'#a78bfa',marginBottom:8}}>🔴 Son Yayınlar & Videolar</h4>
-
-                                        <div className="responsive-iframe" style={{marginBottom:10}}>
-                                            <iframe src="https://www.youtube.com/embed/ANPQvjK7Rio" title="EMCÜK TV ARTIK BURADA :)" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen loading="lazy"></iframe>
+                                <Reveal delay={100}>
+                                    <div className="glass chat-panel">
+                                        <div className="chat-head">
+                                            <h3>💬 Canlı Sohbet</h3>
+                                            <div className="live-pill"><span className="live-dot"></span> {messages.length} mesaj</div>
                                         </div>
 
-                                        <div className="responsive-iframe" style={{marginBottom:10}}>
-                                            <iframe src="https://www.youtube.com/embed/NoabnuzI3HM" title="🐻 Super Bear Adventure öğreniyorum! CANLI YAYIN" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen loading="lazy"></iframe>
+                                        <div className="chat-body" ref={chatScrollRef}>
+                                            {messages.length === 0 ? (
+                                                <div className="chat-empty">Henüz mesaj yok. İlk mesajı sen yaz! 🚀</div>
+                                            ) : messages.map(m => (
+                                                <div className="chat-msg" key={m.id}>
+                                                    <img
+                                                        className={`chat-avatar ${m.role === 'broadcaster' ? 'broadcaster' : ''}`}
+                                                        src={channelData.defaultAvatar}
+                                                        alt="avatar"
+                                                        onError={(e) => { e.target.style.display = 'none'; }}
+                                                    />
+                                                    <div className="body">
+                                                        <div className="row">
+                                                            <span className={`who ${m.role === 'broadcaster' ? '' : 'normal'}`}>{m.name}</span>
+                                                            {m.role === 'broadcaster' && <span className="badge-owner">YAYINCI</span>}
+                                                            <span className="time">{new Date(m.timestamp).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}</span>
+                                                        </div>
+                                                        <div className="text">{m.text}</div>
+                                                    </div>
+                                                    {isBroadcaster && <button className="del" onClick={() => deleteMsg(m.id)}>Sil</button>}
+                                                </div>
+                                            ))}
                                         </div>
 
-                                        <div className="responsive-iframe" style={{maxWidth:480,marginTop:6}}>
-                                            <iframe src="https://www.youtube.com/embed/vDWUp47i1so" title="Victor Bekleme Alaninda Ban Yedi 🤗" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen loading="lazy"></iframe>
+                                        <div className="chat-footer">
+                                            {!user ? (
+                                                <form onSubmit={handleJoin} className="join-form">
+                                                    <input
+                                                        type="text" name="website" autoComplete="off" tabIndex={-1}
+                                                        className="honeypot" value={honeypot}
+                                                        onChange={e => setHoneypot(e.target.value)}
+                                                    />
+                                                    <input type="email" required placeholder="E-posta adresiniz..." value={emailInput} onChange={e => setEmailInput(e.target.value)} />
+                                                    <button type="submit" className="btn" disabled={joining}>{joining ? 'Katılınıyor...' : 'Tamam, Sohbete Katıl'}</button>
+                                                </form>
+                                            ) : (
+                                                <>
+                                                    <div className="userline">
+                                                        <span>Giriş: <b>{user.email}</b>{isBroadcaster && <span className="badge-owner" style={{ marginLeft: 6 }}>YAYINCI</span>}</span>
+                                                        <button className="btn-outline" onClick={handleLogout}>Çıkış</button>
+                                                    </div>
+                                                    <form onSubmit={sendMessage} className="send-row">
+                                                        <input
+                                                            type="text" name="hp2" autoComplete="off" tabIndex={-1}
+                                                            className="honeypot" value={sendHoneypot}
+                                                            onChange={e => setSendHoneypot(e.target.value)}
+                                                        />
+                                                        <input type="text" maxLength={MAX_MESSAGE_LEN} placeholder="Mesajınızı yazın..." value={newMessage} onChange={e => setNewMessage(e.target.value)} />
+                                                        <button type="submit" className="btn" disabled={sendingMsg || !newMessage.trim() || cooldownActive}>{sendingMsg ? '...' : 'Gönder'}</button>
+                                                    </form>
+                                                    <div className="cooldown-bar"><div className="cooldown-fill" style={{ width: `${cooldownPct}%` }}></div></div>
+                                                </>
+                                            )}
                                         </div>
                                     </div>
-                                </div>
-                            </>
-                        )}
-
-                        {path === '/u/0/stream-yt' && (
-                            <div className="glass-card" style={{padding:20}}>
-                                <h2 style={{color:'#fb7185',marginBottom:8}}>🔴 Canlı Yayın Arşivi & Akış</h2>
-                                <p style={{color:'#cbd5e1'}}>Her akşam saat 20:00'de PUBG WOW modunda kesintisiz canlı yayınlardayız!</p>
-
-                                <div style={{marginTop:16,display:'grid',gridTemplateColumns:'1fr',gap:12}}>
-                                    <div className="responsive-iframe embed-wrap">
-                                        <iframe src="https://www.youtube.com/embed/ANPQvjK7Rio" title="EMCÜK TV ARTIK BURADA :)" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen loading="lazy"></iframe>
-                                    </div>
-
-                                    <div className="glass-card" style={{padding:12}}>
-                                        <h3 style={{color:'#e6eefc'}}>🐻 Super Bear Adventure öğreniyorum!</h3>
-                                        <p style={{color:'#cbd5e1',lineHeight:1.6}}>
-                                            İlk kez bu renkli ve eğlenceli maceraya atılıyorum. Birlikte yeni bölümleri keşfedecek, gizli alanları bulacak, yıldızları ve paraları toplayacak, zorlu görevleri tamamlayacağız. Yayın boyunca eğlenceli anlar, sürprizler ve bol sohbet sizleri bekliyor. Destek olmak için videoyu beğenmeyi, kanala abone olmayı ve bildirimleri açmayı unutmayın. Hadi maceraya birlikte başlayalım! ❤️
-                                        </p>
-                                    </div>
-                                </div>
+                                </Reveal>
                             </div>
                         )}
 
                         {path === '/hakkinda' && (
-                            <div className="glass-card">
-                                <h2 style={{color:'#a78bfa'}}>Hakkında</h2>
-                                <p style={{color:'#cbd5e1',marginTop:8,lineHeight:1.6}}>
-                                    VİCTOR REİS DERLER 😇 <br/><br/>
-
-                                    🔴 Reklam ve İşbirliği İçin; <b style={{color:'#fb7185'}}>{channelData.adminEmail}</b><br/><br/>
-
-                                    Ne Bakıyon 🥰 ABONE OLSANA KANKAM 💘💘<br/><br/>
-
-                                    💖 Kankilerim Sayfamıza Hepiniz Hoşgeldiniz<br/><br/>
-
-                                    PUBG UID HESABIM YOK 😁<br/><br/>
-
-                                    Pubg Mobile Resmi İçerik Üreticisi DEĞİLİM. Olmakta İSTEMİYORUM.<br/><br/>
-
-                                    Selamlar Kankilerim İsmim Hakan 38 Yaşındayım Her Akşam Canlı Yayında Sizlerle Birlikte WOW Oynuyoruz. Kanalımda Ki Videolarımın %60'ı Eski Akımlar Olup Şahsıma Ait Olmayanları Sabitlediğim Yorumda Belirttim. Video Sahibi Olan Arkadaşlarım Kanıtı Olduğu Takdirde Videoları Bana Ulaşarak Kaldırma Talebinde Bulunabilir 💘
-                                </p>
-                                <div style={{marginTop:12,color:'#cbd5e1'}}>Diğer bilgiler:<br/>Türkiye — 26 Haz 2025 tarihinde katıldı — 37,3 B abone — 1.219 video — 19.662.432 görüntüleme</div>
-                            </div>
+                            <Reveal>
+                                <div className="glass" style={{ padding: 20 }}>
+                                    <h2 style={{ color: 'var(--green)' }}>Hakkında</h2>
+                                    <div className="desc-box" style={{ marginTop: 10 }}>
+                                        <p>
+                                            Selamlar Kankilerim, İsmim Hakan, 38 Yaşındayım. Her akşam canlı yayında sizlerle birlikte WOW oynuyoruz.
+                                            Kanalımdaki videoların %60'ı eski akımlar olup şahsıma ait olmayanları sabitlediğim yorumda belirttim.
+                                            Video sahibi olan arkadaşlarım kanıtı olduğu takdirde videoları bana ulaşarak kaldırma talebinde bulunabilir 💘
+                                        </p>
+                                    </div>
+                                    <ul style={{ marginTop: 14, color: '#d4d4d8', lineHeight: 1.8, fontSize: 14 }}>
+                                        <li>💻 <b>Kullandığım Cihaz:</b> {channelData.device}</li>
+                                        <li>⚡ <b>FPS:</b> {channelData.fps}</li>
+                                        <li>📩 <b>Reklam ve İşbirliği İçin:</b> <a href={`mailto:${channelData.adminEmail}`} style={{ color: 'var(--green)', fontWeight: 800 }}>{channelData.adminEmail}</a></li>
+                                    </ul>
+                                    <div className="legal-box">
+                                        <b>YASAL UYARI:</b> Her akşam açtığım canlı yayınların ekran kaydını almaktayım. Canlı yayınımda şahsıma edilen küfür/argo kelimelerin gerekli kaydını alarak, küfür edenler hakkında Cumhuriyet Savcılığına suç duyurusunda bulunduğumu lütfen unutmayın 👮
+                                        <div style={{ marginTop: 8, color: 'var(--green)', fontWeight: 900 }}>{channelData.slogan}</div>
+                                    </div>
+                                </div>
+                            </Reveal>
                         )}
 
-                        {path === '/chat' && (
-                            <div style={{maxWidth:900,margin:'18px auto'}}>
-                                <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12,flexWrap:'wrap',gap:10}}>
-                                    <div>
-                                        <h3 style={{color:'#93c5fd'}}>Topluluk Sohbet Odası</h3>
-                                        <div style={{color:'#94a3b8',fontSize:13}}>Bot Tarama ve 21 Haneli Güvenlik Sistemi Aktiftir.</div>
+                        {path === '/videolar' && (
+                            <Reveal>
+                                <div className="glass" style={{ padding: 20 }}>
+                                    <h2 style={{ color: 'var(--green)' }}>🎬 Tüm Videolar ({channelData.totalVideosNum.toLocaleString('tr-TR')})</h2>
+                                    <div className="grid2">
+                                        {[1, 2, 3, 4, 5, 6].map(i => (
+                                            <div className="video-card" key={i}>
+                                                <div className="video-thumb">VİCTOR REİS #{i}</div>
+                                                <h4 style={{ marginTop: 8, fontSize: 14 }}>WOW Serisi Bölüm {i}</h4>
+                                                <div style={{ color: 'var(--muted)', fontSize: 11.5, marginTop: 4 }}>Görüntüleme: 24.5B • Beğeni: 3.2B</div>
+                                                <a href="https://www.youtube.com/@Emc%C3%BCkYTB/videos" target="_blank" rel="noreferrer" className="btn" style={{ display: 'block', textAlign: 'center', marginTop: 10 }}>İzle</a>
+                                            </div>
+                                        ))}
                                     </div>
-                                    {user && (
-                                        <div className="glass-card" style={{display:'flex',gap:10,alignItems:'center',flexWrap:'wrap'}}>
-                                            <div style={{fontSize:12,color:'#cbd5e1',wordBreak:'break-word'}}>Giriş: <b style={{color:'#7c3aed'}}>{user.email}</b></div>
-                                            <button onClick={handleLogout} style={{background:'transparent',border:'1px solid rgba(255,0,0,0.08)',color:'#fb7185',padding:'6px 10px',borderRadius:8,cursor:'pointer'}}>Çıkış</button>
-                                        </div>
-                                    )}
                                 </div>
-
-                                {!user ? (
-                                    <div className="glass-card" style={{maxWidth:480,margin:'0 auto',textAlign:'center'}}>
-                                        <h4 style={{color:'#a78bfa'}}>E-posta ile 21 Haneli Doğrulama</h4>
-                                        {step === 1 ? (
-                                            <form onSubmit={handleRequestKey} style={{display:'flex',flexDirection:'column',gap:10,marginTop:12}}>
-                                                <input type="email" value={emailInput} onChange={e=>setEmailInput(e.target.value)} placeholder="E-posta adresiniz..." required style={{padding:10,borderRadius:10,border:'1px solid rgba(255,255,255,0.04)',background:'rgba(10,10,20,0.6)',color:'#fff'}} />
-                                                <div onClick={()=>setCaptchaVerified(!captchaVerified)} style={{cursor:'pointer',padding:12,borderRadius:12,background:captchaVerified?'rgba(16,185,129,0.12)':'rgba(15,23,42,0.6)',border:'1px solid rgba(255,255,255,0.03)'}}>
-                                                    <span style={{marginRight:8}}>{captchaVerified ? '✅' : '⬜'}</span>
-                                                    <span style={{fontWeight:800}}>{captchaVerified ? 'reCAPTCHA Doğrulandı' : 'Robot Değilim (Tıkla)'}</span>
-                                                </div>
-                                                <button type="submit" className="btn-primary" disabled={requestingKey}>{requestingKey ? 'Gönderiliyor...' : '21 Haneli Kod Gönder'}</button>
-                                            </form>
-                                        ) : (
-                                            <form onSubmit={handleVerifyKey} style={{display:'flex',flexDirection:'column',gap:10,marginTop:12}}>
-                                                <div style={{color:'#94a3b8',fontSize:13}}>E-postanıza gönderilen 21 haneli anahtarı girin (10 dakika geçerli):</div>
-                                                <input type="text" value={keyInput} onChange={e=>setKeyInput(e.target.value)} placeholder="21 haneli anahtar..." required style={{padding:10,borderRadius:10,border:'1px solid rgba(255,255,255,0.04)',background:'rgba(10,10,20,0.6)',color:'#fff',fontFamily:'monospace',textAlign:'center'}} />
-                                                <button type="submit" className="btn-primary" disabled={verifyingKey}>{verifyingKey ? 'Doğrulanıyor...' : 'Doğrula ve Giriş Yap'}</button>
-                                                <button type="button" onClick={()=>{setStep(1); setKeyInput('');}} style={{background:'transparent',border:'none',color:'#94a3b8',cursor:'pointer',fontSize:12}}>‹ E-postayı değiştir</button>
-                                            </form>
-                                        )}
-                                    </div>
-                                ) : (
-                                    <div className="glass-card" style={{padding:12}}>
-                                        <div ref={chatScrollRef} style={{height:420,overflowY:'auto',paddingRight:8,borderBottom:'1px solid rgba(255,255,255,0.03)'}}>
-                                            {messages.length === 0 ? <p style={{color:'#94a3b8',textAlign:'center',marginTop:40}}>Henüz mesaj yazılmamış. İlk mesajı sen yaz kankam! 🚀</p> :
-                                                messages.map(m => (
-                                                    <div key={m.id} style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',background:'rgba(0,0,0,0.25)',padding:10,borderRadius:12,marginBottom:8,gap:8}}>
-                                                        <div style={{minWidth:0}}>
-                                                            <div style={{display:'flex',gap:8,alignItems:'center',flexWrap:'wrap'}}>
-                                                                <div style={{fontWeight:800,color:'#7c3aed',fontSize:12}}>{m.name}</div>
-                                                                <div style={{fontSize:11,color:'#94a3b8'}}>{new Date(m.timestamp).toLocaleTimeString('tr-TR', {hour:'2-digit',minute:'2-digit'})}</div>
-                                                            </div>
-                                                            <div style={{color:'#e6eefc',marginTop:6,wordBreak:'break-word'}}>{m.text}</div>
-                                                        </div>
-                                                        {user.email === channelData.adminEmail && <button onClick={()=>deleteMsg(m.id)} style={{background:'rgba(255,0,0,0.06)',color:'#fb7185',border:'none',padding:'6px 8px',borderRadius:8,cursor:'pointer',flexShrink:0}}>Sil</button>}
-                                                    </div>
-                                                ))
-                                            }
-                                        </div>
-
-                                        <form onSubmit={sendMessage} className="chat-input-row">
-                                            <input type="text" value={newMessage} onChange={e=>setNewMessage(e.target.value)} maxLength={500} placeholder="Mesajınızı yazın kankam (Bot taramalı)..." style={{padding:10,borderRadius:10,border:'1px solid rgba(255,255,255,0.03)',background:'rgba(10,10,20,0.6)',color:'#fff'}} />
-                                            <button className="btn-primary" type="submit" disabled={sendingMsg || !newMessage.trim()}>{sendingMsg ? '...' : 'Gönder'}</button>
-                                        </form>
-                                    </div>
-                                )}
-                            </div>
+                            </Reveal>
                         )}
 
                         {path === '/profil' && (
-                            <div style={{maxWidth:520,margin:'18px auto'}}>
-                                <div className="glass-card" style={{textAlign:'center'}}>
-                                    <h3 style={{color:'#a78bfa'}}>Kullanıcı Profilim</h3>
+                            <Reveal>
+                                <div className="glass profile-card" style={{ padding: 22 }}>
+                                    <h3 style={{ color: 'var(--green)' }}>Profilim</h3>
                                     {user ? (
-                                        <div style={{textAlign:'left',marginTop:12}}>
-                                            <p style={{wordBreak:'break-word'}}>👤 <b>Kullanıcı Adı:</b> {user.name}</p>
-                                            <p style={{wordBreak:'break-word'}}>📩 <b>E-posta:</b> {user.email}</p>
-                                            <p>🛡️ <b>Doğrulama:</b> 21 Haneli Anahtar Onaylı</p>
-                                            <p>📅 <b>Kayıt Tarihi:</b> {user.joined || "Bugün"}</p>
-                                            <button onClick={handleLogout} className="btn-primary" style={{marginTop:12,background:'#ef4444'}}>Çıkış Yap</button>
+                                        <div style={{ marginTop: 14 }}>
+                                            <div className="row"><span>👤 Kullanıcı</span><b>{user.name}</b></div>
+                                            <div className="row"><span>📩 E-posta</span><b>{user.email}</b></div>
+                                            <div className="row"><span>📅 Giriş Tarihi</span><b>{user.joined || 'Bugün'}</b></div>
+                                            <div className="row" style={{ borderBottom: 'none' }}><span>🎙️ Yayıncı Modu</span><b style={{ color: isBroadcaster ? 'var(--green)' : 'var(--muted)' }}>{isBroadcaster ? 'Aktif' : 'Kapalı'}</b></div>
+                                            <button className="btn" style={{ marginTop: 16, background: 'var(--danger)', color: '#fff' }} onClick={handleLogout}>Çıkış Yap</button>
                                         </div>
                                     ) : (
-                                        <div>
-                                            <p style={{color:'#94a3b8'}}>Profilinizi görmek için e-posta ile giriş yapmalısınız kankam.</p>
-                                            <button onClick={()=>navigate('/chat')} className="btn-primary" style={{marginTop:8}}>Giriş Yap / Kayıt Ol</button>
+                                        <div style={{ marginTop: 14 }}>
+                                            <p style={{ color: 'var(--muted)' }}>Profilinizi görmek için canlı yayın sohbetinden e-posta ile katılın.</p>
+                                            <button className="btn" style={{ marginTop: 12 }} onClick={() => navigate('/canli')}>Canlı Yayına Git</button>
                                         </div>
                                     )}
                                 </div>
-                            </div>
+                            </Reveal>
                         )}
-
-                        {path === '/w/9/videolar-hepsi' && (
-                            <div className="glass-card" style={{padding:18}}>
-                                <h3 style={{color:'#8b5cf6'}}>🎬 Tüm Videolar ve Eski Akımlar ({channelData.totalVideos} Video)</h3>
-                                <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))',gap:12,marginTop:12}}>
-                                    {[1,2,3,4,5,6].map(i => (
-                                        <div key={i} style={{background:'rgba(0,0,0,0.35)',padding:12,borderRadius:12}}>
-                                            <div style={{height:120,background:'linear-gradient(180deg,#0f172a,#0b1220)',borderRadius:8,display:'flex',alignItems:'center',justifyContent:'center',color:'#a78bfa',fontWeight:900}}>Emcük Video #{i}</div>
-                                            <h4 style={{marginTop:8}}>VİCTOR REİS WOW Serisi Bölüm {i}</h4>
-                                            <div style={{color:'#94a3b8',fontSize:12}}>Görüntüleme: 24.5B • Beğeni: 3.2B</div>
-                                            <a href="https://www.youtube.com/@Emc%C3%BCkYTB/videos" target="_blank" rel="noreferrer" className="btn-primary" style={{display:'block',textAlign:'center',marginTop:8}}>İzle</a>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
                     </main>
 
                     <footer className={`site-footer ${footerVisible ? 'visible' : ''}`} aria-hidden={!footerVisible}>
                         <div className="footer-inner">
-                            <div className="marquee-left">
-                                <img src={channelData.profileImage} alt="logo" onError={(e)=>{ e.target.onerror=null; e.target.src = channelData.fallbackImage; }} />
+                            <div className="footer-left">
+                                <img src={channelData.logo} alt="logo" onError={(e) => { e.target.onerror = null; e.target.src = channelData.fallbackLogo; }} />
                                 <div>
-                                    <div style={{fontWeight:900,color:'#fff'}}>Marmara Games © - Emcük YTB</div>
-                                    <div style={{color:'#94a3b8',fontSize:12}}>Canlı Yayın & İçerik Platformu</div>
+                                    <div className="t1">Marmara Games © - Emcük YTB</div>
+                                    <div className="t2">Canlı Yayın & İçerik Platformu</div>
                                 </div>
                             </div>
-
-                            <div style={{textAlign:'right'}} className="footer-right">
-                                <div className="cyber-text">CYBERPUNK • EM CÜK</div>
-                                <small style={{display:'block',marginTop:6,color:'#94a3b8'}}>VİCTOR REİS DERLER 😇 — {channelData.channelHandle}</small>
+                            <div style={{ textAlign: 'right' }}>
+                                <div className="cyber-text">CANLI • EM CÜK</div>
+                                <small style={{ display: 'block', marginTop: 4, color: 'var(--muted)', fontSize: 11 }}>{channelData.channelHandle}</small>
                             </div>
                         </div>
                     </footer>
+
+                    <button className="fab" title="Canlı sohbete git" onClick={() => { navigate('/canli'); window.scrollTo(0, 0); }}>💬</button>
                 </div>
             );
         }
 
         const rootEl = document.getElementById('root');
         if (rootEl) {
-            const root = createRoot(rootEl);
-            root.render(<App />);
+            createRoot(rootEl).render(<App />);
         } else {
-            console.error("Root elementi bulunamadı, uygulama başlatılamadı.");
+            console.error("Root elementi bulunamadı.");
         }
     </script>
 </body>
