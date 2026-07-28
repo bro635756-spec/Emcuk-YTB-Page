@@ -16,5 +16,3 @@ const db = getDatabase(app);
 
 export const ADMIN_EMAIL = "tvemcuk@gmail.com";
 export { db };
-
-console.log("[Emcük Core] Sistem başarıyla başlatıldı.");
