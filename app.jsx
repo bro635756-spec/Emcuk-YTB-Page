@@ -9,7 +9,7 @@ export function App() {
     const [user, setUser] = useState(null);
     const [emailInput, setEmailInput] = useState("");
     const [keyInput, setKeyInput] = useState("");
-    const [step, setStep] = useState(1); // 1: E-posta gir, 2: 21 haneli anahtarı gir
+    const [step, setStep] = useState(1);
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState("");
 
@@ -35,14 +35,11 @@ export function App() {
         setPath(url);
     };
 
-    // 1. Adım: E-posta ile 21 haneli anahtar talep etme
     const handleRequestKey = async (e) => {
         e.preventDefault();
         if (!emailInput.trim()) return;
 
         const generatedKey = generate21DigitKey();
-
-        // Veritabanına anahtarı kaydet
         const keyRef = ref(db, `auth_keys/${emailInput.replace(/[.#$\/\[\]]/g, '_')}`);
         await set(keyRef, { key: generatedKey, time: Date.now() });
 
@@ -50,7 +47,6 @@ export function App() {
         setStep(2);
     };
 
-    // 2. Adım: 21 haneli anahtarı girerek doğrula ve giriş yap
     const handleVerifyKey = async (e) => {
         e.preventDefault();
         const keyRef = ref(db, `auth_keys/${emailInput.replace(/[.#$\/\[\]]/g, '_')}`);
