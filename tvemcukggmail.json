@@ -1,12 +1,12 @@
 {
-  "type": "service_account",
-  "project_id": "emcuk-ytb",
-  "private_key_id": "mock_key_id_21_digit_secure",
-  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC3...\n-----END PRIVATE KEY-----\n",
-  "client_email": "firebase-adminsdk-abc@emcuk-ytb.iam.gserviceaccount.com",
-  "client_id": "583409310450",
-  "auth_uri": "https://accounts.google.com/apis/oauth2/auth",
-  "token_uri": "https://oauth2.googleapis.com/token",
-  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-abc%40emcuk-ytb.iam.gserviceaccount.com"
+  "channelName": "Emcük YTB",
+  "channelHandle": "@EmcükYTB",
+  "adminEmail": "tvemcuk@gmail.com",
+  "ownerName": "Hakan",
+  "age": 38,
+  "device": "Samsung Galaxy Tab S9 Ultra + Scorpion 2 Pro Klavye Mouse",
+  "fps": "119.5",
+  "slogan": "SAYGIDA MECBUR SEVGİDE ÖZGÜRSÜNÜZ 💝",
+  "subscribers": "37,2 B",
+  "totalVideos": "1.219"
 }
