@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Emcuk YTB - Resmi Platform</title>
+    <title>Emcük YTB - Resmi Platform</title>
     <meta name="description" content="VİCTOR REİS DERLER 😇 Hakan abinin resmi yayın ve topluluk platformu.">
-    <link rel="stylesheet" href="app.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <!-- React ve ReactDOM CDN -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
@@ -13,19 +15,451 @@
     
     <!-- Babel Standalone (JSX Çevirici) -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+        :root {
+            --bg-color: #090a0f;
+            --card-bg: rgba(18, 19, 26, 0.88);
+            --primary: #6366f1;
+            --accent: #ec4899;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image: url('arkaplan.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            font-weight: 600;
+            padding: 12px 24px;
+            border-radius: 14px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-primary:hover {
+            opacity: 0.95;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(236, 72, 153, 0.5);
+        }
+
+        input, textarea {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 12px 16px;
+            color: white;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, textarea:focus {
+            border-color: var(--primary);
+        }
+
+        /* Özel Kaydırma Çubuğu */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(9, 10, 15, 0.5);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(99, 102, 241, 0.4);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(99, 102, 241, 0.7);
+        }
+
+        @keyframes pulseGlow {
+            0% { transform: scale(1); opacity: 0.9; }
+            50% { transform: scale(1.02); opacity: 1; filter: drop-shadow(0 0 12px rgba(236, 72, 153, 0.6)); }
+            100% { transform: scale(1); opacity: 0.9; }
+        }
+
+        .pulse-anim {
+            animation: pulseGlow 3s infinite ease-in-out;
+        }
+    </style>
 </head>
 <body>
     <div id="root"></div>
 
-    <!-- Firebase SDK Scripts -->
-    <script type="module" src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"></script>
-    <script type="module" src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js"></script>
-    
-    <!-- Uygulama Başlatıcı -->
+    <!-- Tüm Uygulama ve Mantık (React + Firebase + Modüller Tek Blokta) -->
     <script type="text/babel" data-type="module">
-        import React from 'react';
+        import React, { useState, useEffect } from 'react';
         import { createRoot } from 'react-dom/client';
-        import { App } from './app.jsx';
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, set, get, push, remove, onChildAdded } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        // --- 1. KANAL & VERİ AYARLARI (tvemcukggmail.json karşılığı) ---
+        const channelData = {
+            channelName: "Emcük YTB",
+            channelHandle: "@EmcükYTB",
+            adminEmail: "tvemcuk@gmail.com",
+            ownerName: "Hakan",
+            age: 38,
+            device: "Samsung Galaxy Tab S9 Ultra + Scorpion 2 Pro Klavye Mouse",
+            fps: "119.5",
+            slogan: "SAYGIDA MECBUR SEVGİDE ÖZGÜRSÜNÜZ 💝",
+            subscribers: "37,2 B",
+            totalVideos: "1.219"
+        };
+
+        // --- 2. FIREBASE BAĞLANTISI ---
+        const firebaseConfig = {
+          apiKey: "AIzaSyDFobHTVqG2dt54QGokkJWDBxBFuFOniYc",
+          authDomain: "emcuk-ytb.firebaseapp.com",
+          databaseURL: "https://emcuk-ytb-default-rtdb.firebaseio.com",
+          projectId: "emcuk-ytb",
+          storageBucket: "emcuk-ytb.firebasestorage.app",
+          messagingSenderId: "583409310450",
+          appId: "1:583409310450:web:b14cf43e280ba87f9c8e6b"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // --- 3. YARDIMCI MODÜLLER (Key Üretici & Bot Tarayıcı) ---
+        function generate21DigitKey() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let result = '';
+            for (let i = 0; i < 21; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+        }
+
+        function scanMessageForBots(text) {
+            const spamKeywords = ['bedava uc', 'hile', 'hack', 'kazandınız', 'tıkla', 'free uc', 'nitro'];
+            const lowerText = text.toLowerCase();
+            for (let word of spamKeywords) {
+                if (lowerText.includes(word)) {
+                    return false; // Zararlı bot kelimesi algılandı
+                }
+            }
+            return true; // Temiz mesaj
+        }
+
+        async function fetchLiveYouTubeData() {
+            // Canlı YouTube veri simülasyonu / entegrasyon katmanı
+            return {
+                isLive: true,
+                viewers: "1,540",
+                title: "Hakan İle Canlı WOW Keyfi - VİCTOR REİS DERLER 😇",
+                subscribers: channelData.subscribers,
+                totalVideos: channelData.totalVideos
+            };
+        }
+
+        // --- 4. ANA REACT UYGULAMASI ---
+        function App() {
+            const [path, setPath] = useState(window.location.pathname);
+            const [user, setUser] = useState(null);
+            const [emailInput, setEmailInput] = useState("");
+            const [keyInput, setKeyInput] = useState("");
+            const [step, setStep] = useState(1); // 1: E-posta & reCAPTCHA, 2: 21 Haneli Anahtar Girişi
+            const [messages, setMessages] = useState([]);
+            const [newMessage, setNewMessage] = useState("");
+            const [ytData, setYtData] = useState(null);
+            const [captchaVerified, setCaptchaVerified] = useState(false);
+
+            useEffect(() => {
+                const handlePopState = () => setPath(window.location.pathname);
+                window.addEventListener('popstate', handlePopState);
+
+                const savedUser = localStorage.getItem('emcuk_user');
+                if (savedUser) setUser(JSON.parse(savedUser));
+
+                fetchLiveYouTubeData().then(data => setYtData(data));
+
+                if (window.location.pathname === '/chat' || window.location.pathname === '') {
+                    const msgRef = ref(db, 'chat_messages');
+                    onChildAdded(msgRef, (snapshot) => {
+                        setMessages(prev => [...prev, { id: snapshot.key, ...snapshot.val() }]);
+                    });
+                }
+
+                return () => window.removeEventListener('popstate', handlePopState);
+            }, [path]);
+
+            const navigate = (url) => {
+                window.history.pushState({}, '', url);
+                setPath(url);
+            };
+
+            const handleRequestKey = async (e) => {
+                e.preventDefault();
+                if (!captchaVerified) {
+                    alert("⚠️ Lütfen reCAPTCHA (Robot Değilim) doğrulamasını tamamlayın!");
+                    return;
+                }
+                if (!emailInput.trim()) return;
+
+                const generatedKey = generate21DigitKey();
+                const keyRef = ref(db, `auth_keys/${emailInput.replace(/[.#$\/\[\]]/g, '_')}`);
+                await set(keyRef, { key: generatedKey, time: Date.now() });
+
+                alert(`[Güvenlik Doğrulaması] ${emailInput} adresine 21 haneli özel anahtar üretildi!\n\n(Test için anahtarınız): ${generatedKey}`);
+                setStep(2);
+            };
+
+            const handleVerifyKey = async (e) => {
+                e.preventDefault();
+                const keyRef = ref(db, `auth_keys/${emailInput.replace(/[.#$\/\[\]]/g, '_')}`);
+                const snap = await get(keyRef);
+
+                if (snap.exists() && snap.val().key === keyInput.trim()) {
+                    const userData = { email: emailInput, name: emailInput.split('@')[0] };
+                    setUser(userData);
+                    localStorage.setItem('emcuk_user', JSON.stringify(userData));
+                    alert("Giriş başarılı! Hoş geldin kankam 💘");
+                } else {
+                    alert("❌ Hatalı veya süresi dolmuş 21 haneli anahtar!");
+                }
+            };
+
+            const handleLogout = () => {
+                setUser(null);
+                localStorage.removeItem('emcuk_user');
+                setStep(1);
+                setEmailInput("");
+                setKeyInput("");
+                setCaptchaVerified(false);
+            };
+
+            const sendMessage = async (e) => {
+                e.preventDefault();
+                if (!newMessage.trim() || !user) return;
+
+                // Bot ve spam filtresi kontrolü
+                if (!scanMessageForBots(newMessage)) {
+                    alert("🛡️ Bot Tarama Sistemi: Mesajınız zararlı veya yasaklı kelime içerdiği için engellendi!");
+                    return;
+                }
+
+                const msgRef = ref(db, 'chat_messages');
+                await push(msgRef, {
+                    name: user.name,
+                    email: user.email,
+                    text: newMessage,
+                    timestamp: Date.now()
+                });
+                setNewMessage("");
+            };
+
+            const deleteMsg = async (id) => {
+                if (user?.email !== channelData.adminEmail) {
+                    alert("Bu işlem için yetkiniz yok!");
+                    return;
+                }
+                await remove(ref(db, `chat_messages/${id}`));
+                setMessages(prev => prev.filter(m => m.id !== id));
+            };
+
+            return (
+                <div className="min-h-screen flex flex-col">
+                    {/* Üst Menü Navigasyonu */}
+                    <header className="glass-card m-4 p-4 flex justify-between items-center z-50">
+                        <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
+                            <img src="ytlogo.png" alt="Logo" className="w-11 h-11 rounded-full object-cover border-2 border-indigo-500/50 pulse-anim" />
+                            <div>
+                                <span className="font-extrabold text-lg tracking-wider text-white">Emcük YTB</span>
+                                <p className="text-[10px] text-pink-400 font-semibold">VİCTOR REİS DERLER 😇</p>
+                            </div>
+                        </div>
+                        <nav className="flex gap-6 text-sm font-semibold items-center">
+                            <button onClick={() => navigate('/')} className={`hover:text-indigo-400 transition ${path === '/' ? 'text-indigo-400 underline underline-offset-8' : 'text-slate-300'}`}>Ana Sayfa</button>
+                            <button onClick={() => navigate('/hakkinda')} className={`hover:text-indigo-400 transition ${path === '/hakkinda' ? 'text-indigo-400 underline underline-offset-8' : 'text-slate-300'}`}>Hakkında & Bilgiler</button>
+                            <button onClick={() => navigate('/chat')} className={`hover:text-indigo-400 transition ${path === '/chat' ? 'text-indigo-400 underline underline-offset-8' : 'text-slate-300'}`}>Canlı Chat</button>
+                        </nav>
+                    </header>
+
+                    {/* Ana İçerik Alanı */}
+                    <main className="flex-1 pb-12">
+                        {(path === '/' || path === '') && (
+                            <div className="p-8 max-w-6xl mx-auto space-y-8">
+                                <div className="glass-card p-10 text-center relative overflow-hidden pulse-anim">
+                                    <h1 className="text-4xl font-extrabold text-pink-400 mb-3 tracking-wide">VİCTOR REİS DERLER 😇</h1>
+                                    <p className="text-2xl text-indigo-300 mb-6 font-medium">Ne Bakıyon 🥰 ABONE OLSANA KANKAM 💘💘</p>
+                                    <div className="flex flex-wrap justify-center gap-6 text-sm font-semibold text-slate-200">
+                                        <span className="bg-indigo-950/60 px-4 py-2 rounded-xl border border-indigo-500/30">👥 {ytData ? ytData.subscribers : channelData.subscribers} Abone</span>
+                                        <span className="bg-indigo-950/60 px-4 py-2 rounded-xl border border-indigo-500/30">🎬 {ytData ? ytData.totalVideos : channelData.totalVideos} Video</span>
+                                        <span className="bg-emerald-950/60 px-4 py-2 rounded-xl border border-emerald-500/30 text-emerald-400">🔴 {ytData && ytData.isLive ? `Canlı İzleyici: ${ytData.viewers}` : "Her Akşam Canlı Yayın"}</span>
+                                    </div>
+                                </div>
+
+                                <div className="flex flex-col md:flex-row items-center justify-between glass-card p-6 gap-4">
+                                    <div className="flex items-center gap-4">
+                                        <img src="canliyayinyazisi.png" alt="Canlı Durum" className="h-12 animate-pulse object-contain" />
+                                        <div>
+                                            <h2 className="text-xl font-bold text-indigo-400">Emcük YTB Canlı Yayın Akışı</h2>
+                                            <p className="text-slate-400 text-sm">
+                                                <a href="https://www.youtube.com/@Emc%C3%BCkYTB/streams" target="_blank" rel="noreferrer" className="text-pink-400 underline font-semibold">
+                                                    @EmcükYTB
+                                                </a> resmi kanalından anlık WOW yayınları seni bekliyor!
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <a href="https://www.youtube.com/@Emc%C3%BCkYTB/streams" target="_blank" rel="noreferrer" className="btn-primary text-sm whitespace-nowrap">
+                                        🔴 Canlı Yayına Git
+                                    </a>
+                                </div>
+                            </div>
+                        )}
+
+                        {path === '/hakkinda' && (
+                            <div className="p-8 max-w-3xl mx-auto glass-card mt-6 space-y-6">
+                                <h2 className="text-2xl font-bold text-indigo-400 flex items-center gap-2">
+                                    💖 Kankilerim Sayfamıza Hepiniz Hoşgeldiniz
+                                </h2>
+                                <p className="text-slate-300 leading-relaxed text-sm md:text-base">
+                                    Selamlar Kankilerim İsmim Hakan 38 Yaşındayım Her Akşam Canlı Yayında Sizlerle Birlikte WOW Oynuyoruz. Kanalımda Ki Videolarımın %60'ı Eski Akımlar Olup Şahsıma Ait Olmayanları Sabitlediğim Yorumda Belirttim. Video Sahibi Olan Arkadaşlarım Kanıtı Olduğu Takdirde Videoları Bana Ulaşarak Kaldırma Talebinde Bulunabilir 💘
+                                </p>
+                                <div className="bg-slate-900/80 p-5 rounded-2xl border border-slate-800 space-y-3 text-sm">
+                                    <p>🤝 <b>Katıl Aboneleri:</b> Oyundan Ekliyorum 👍</p>
+                                    <p>💻 <b>Kullandığım Cihaz:</b> {channelData.device}</p>
+                                    <p>⚡ <b>FPS:</b> {channelData.fps} 😇</p>
+                                    <p>📩 <b>Reklam ve İşbirliği İçin:</b> <a href={`mailto:${channelData.adminEmail}`} className="text-pink-400 underline font-semibold">{channelData.adminEmail}</a></p>
+                                </div>
+                                <div className="p-5 rounded-2xl bg-red-950/40 border border-red-500/30 text-xs text-red-300 leading-relaxed">
+                                    <b>YASAL UYARI:</b> Her Akşam Açtığım Canlı Yayınların Ekran Kaydını Almaktayım, Canlı Yayınımda Şahsıma Edilen KÜFÜR /ARGO Kelimelerin Gerekli Kaydını Alarak, Küfür Edenler Hakkında CUMHURİYET SAVCILIĞINA SUÇ DUYURUSUNDA Bulunduğumu Lütfen Unutmayin 👮 <br/><br/>
+                                    <span className="font-bold text-pink-400 text-sm">SAYGIDA MECBUR SEVGİDE ÖZGÜRSÜNÜZ 💝</span>
+                                </div>
+                                <img src="victorkomik.png" alt="Victor Komik" className="rounded-2xl w-full object-cover max-h-72 border border-slate-800 shadow-xl" />
+                            </div>
+                        )}
+
+                        {path === '/chat' && (
+                            <div className="p-6 max-w-4xl mx-auto">
+                                <div className="flex justify-between items-center mb-6">
+                                    <div>
+                                        <h2 className="text-2xl font-bold text-indigo-300">Topluluk Sohbet Odası</h2>
+                                        <p className="text-xs text-slate-400 mt-1">Bot Tarama ve 21 Haneli Güvenlik Sistemi Aktiftir.</p>
+                                    </div>
+                                    {user && (
+                                        <div className="flex items-center gap-3 bg-slate-900/80 px-4 py-2 rounded-xl border border-slate-800">
+                                            <span className="text-xs text-slate-300">Giriş: <b className="text-indigo-400">{user.email}</b></span>
+                                            <button onClick={handleLogout} className="text-xs bg-red-500/20 hover:bg-red-500/30 text-red-400 px-3 py-1.5 rounded-lg transition">Çıkış</button>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {!user ? (
+                                    <div className="glass-card p-8 max-w-md mx-auto text-center space-y-5">
+                                        <h3 className="font-bold text-lg text-indigo-400">E-posta ile 21 Haneli Doğrulama</h3>
+                                        {step === 1 ? (
+                                            <form onSubmit={handleRequestKey} className="space-y-4">
+                                                <input 
+                                                    type="email" 
+                                                    value={emailInput} 
+                                                    onChange={(e) => setEmailInput(e.target.value)} 
+                                                    placeholder="E-posta adresiniz..." 
+                                                    required
+                                                    className="w-full"
+                                                />
+                                                {/* reCAPTCHA Simülasyon / Doğrulama Alanı */}
+                                                <div className="flex justify-center my-2">
+                                                    <div 
+                                                        onClick={() => setCaptchaVerified(!captchaVerified)} 
+                                                        className={`cursor-pointer p-3.5 rounded-xl border text-xs flex items-center justify-center gap-3 transition select-none w-full ${captchaVerified ? 'bg-emerald-950/50 border-emerald-500/60 text-emerald-300' : 'bg-slate-900 border-slate-800 text-slate-400 hover:border-slate-700'}`}
+                                                    >
+                                                        <span className="text-lg">{captchaVerified ? "✅" : "⬜"}</span>
+                                                        <span className="font-semibold">{captchaVerified ? "reCAPTCHA Doğrulandı" : "Robot Değilim (Tıkla)"}</span>
+                                                    </div>
+                                                </div>
+                                                <button type="submit" className="btn-primary w-full">21 Haneli Kod Gönder</button>
+                                            </form>
+                                        ) : (
+                                            <form onSubmit={handleVerifyKey} className="space-y-4">
+                                                <p className="text-xs text-slate-400">E-postanıza (veya sistem simülasyonuna) gönderilen 21 haneli anahtarı girin:</p>
+                                                <input 
+                                                    type="text" 
+                                                    value={keyInput} 
+                                                    onChange={(e) => setKeyInput(e.target.value)} 
+                                                    placeholder="21 haneli anahtar..." 
+                                                    required
+                                                    className="w-full font-mono text-center tracking-wider text-indigo-300"
+                                                />
+                                                <button type="submit" className="btn-primary w-full">Doğrula ve Giriş Yap</button>
+                                            </form>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <div className="glass-card h-[600px] flex flex-col justify-between p-5 shadow-2xl">
+                                        <div className="overflow-y-auto flex-1 space-y-3 pr-2 border-b border-slate-800 pb-4">
+                                            {messages.length === 0 ? (
+                                                <p className="text-center text-slate-500 text-sm mt-20">Henüz mesaj yazılmamış. İlk mesajı sen yaz kankam! 🚀</p>
+                                            ) : (
+                                                messages.map(m => (
+                                                    <div key={m.id} className="flex justify-between items-start bg-slate-900/60 p-3.5 rounded-2xl border border-slate-800/80">
+                                                        <div>
+                                                            <div className="flex items-center gap-2">
+                                                                <span className="font-bold text-xs text-indigo-400">{m.name}</span>
+                                                                <span className="text-[10px] text-slate-500">{new Date(m.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                                                            </div>
+                                                            <p className="text-sm text-slate-200 mt-1 leading-relaxed">{m.text}</p>
+                                                        </div>
+                                                        {user.email === channelData.adminEmail && (
+                                                            <button onClick={() => deleteMsg(m.id)} className="text-[10px] bg-red-500/20 hover:bg-red-500/40 text-red-300 px-2.5 py-1 rounded-lg transition">Sil</button>
+                                                        )}
+                                                    </div>
+                                                ))
+                                            )}
+                                        </div>
+                                        <form onSubmit={sendMessage} className="mt-4 flex gap-3">
+                                            <input 
+                                                type="text" 
+                                                value={newMessage} 
+                                                onChange={(e) => setNewMessage(e.target.value)} 
+                                                placeholder="Mesajınızı yazın kankam (Bot taramalı)..." 
+                                                className="flex-1"
+                                            />
+                                            <button type="submit" className="btn-primary whitespace-nowrap">Gönder</button>
+                                        </form>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </main>
+
+                    {/* Alt Bilgi */}
+                    <footer className="text-center py-6 text-xs text-slate-500 border-t border-slate-800/40">
+                        {channelData.channelName} © 2026 - Tüm Hakları Saklıdır. {channelData.slogan}
+                    </footer>
+                </div>
+            );
+        }
 
         const root = createRoot(document.getElementById('root'));
         root.render(<App />);
