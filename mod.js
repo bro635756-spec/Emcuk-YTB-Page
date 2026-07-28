@@ -1,4 +1,3 @@
-// 21 Haneli Rastgele Doğrulama Anahtarı Üretici
 export function generate21DigitKey() {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';
@@ -7,5 +6,3 @@ export function generate21DigitKey() {
     }
     return result;
 }
-
-console.log("[Emcük Mod] Güvenlik ve Anahtar modülü yüklendi.");
